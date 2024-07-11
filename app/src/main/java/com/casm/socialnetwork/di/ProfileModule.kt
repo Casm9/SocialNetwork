@@ -4,7 +4,10 @@ import com.casm.socialnetwork.feature_profile.data.remote.ProfileApi
 import com.casm.socialnetwork.feature_profile.data.repository.ProfileRepositoryImpl
 import com.casm.socialnetwork.feature_profile.domain.repository.ProfileRepository
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetProfileUseCase
+import com.casm.socialnetwork.feature_profile.domain.use_case.GetSkillsUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.ProfileUseCases
+import com.casm.socialnetwork.feature_profile.domain.use_case.UpdateProfileUseCase
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,15 +35,17 @@ object ProfileModule {
 
     @Provides
     @Singleton
-    fun provideProfileRepository(api: ProfileApi): ProfileRepository {
-        return ProfileRepositoryImpl(api)
+    fun provideProfileRepository(api: ProfileApi, gson: Gson): ProfileRepository {
+        return ProfileRepositoryImpl(api, gson)
     }
 
     @Provides
     @Singleton
     fun provideProfileUseCases(repository: ProfileRepository): ProfileUseCases {
         return ProfileUseCases(
-            getProfile = GetProfileUseCase(repository)
+            getProfile = GetProfileUseCase(repository),
+            getSkills = GetSkillsUseCase(repository),
+            updateProfile = UpdateProfileUseCase(repository)
         )
     }
 }

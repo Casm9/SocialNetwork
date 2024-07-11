@@ -72,14 +72,14 @@ import java.util.UUID
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun CreatePostScreen(
-    navController: NavController,
+    onNavigateUp: () -> Unit = {},
     viewModel: CreatePostViewModel = hiltViewModel(),
     scaffoldState: ScaffoldState
 ) {
     val imageUri = viewModel.chosenImageUri.value
 
     val cropActivityLauncher = rememberLauncherForActivityResult(
-        contract = CropActivityResultContract()
+        contract = CropActivityResultContract(16f,9f)
     ) {
         viewModel.onEvent(CreatePostEvent.CropImage(it))
     }
@@ -105,7 +105,7 @@ fun CreatePostScreen(
                 }
 
                 is UiEvent.NavigateUp -> {
-                    navController.navigateUp()
+                    onNavigateUp()
                 }
 
                 else -> {}
@@ -119,7 +119,7 @@ fun CreatePostScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         StandardToolBar(
-            navController = navController,
+            onNavigateUp = onNavigateUp,
             showBackArrow = true,
             title = {
                 Text(

@@ -16,8 +16,8 @@ import com.casm.socialnetwork.R
 
 @Composable
 fun StandardToolBar(
-    navController: NavController,
     modifier: Modifier = Modifier,
+    onNavigateUp: () -> Unit = {},
     showBackArrow: Boolean = false,
     navActions: @Composable RowScope.() -> Unit = {},
     title: @Composable () -> Unit = {},
@@ -28,7 +28,7 @@ fun StandardToolBar(
         navigationIcon = if(showBackArrow) {
             {
                 IconButton(onClick = {
-                    navController.navigateUp()
+                    onNavigateUp()
                 }) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,

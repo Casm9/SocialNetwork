@@ -14,7 +14,8 @@ import com.casm.socialnetwork.core.presentation.components.StandardScaffold
 
 @Composable
 fun ChatScreen(
-    navController: NavController
+    onNavigate: (String) -> Unit = {},
+    onNavigateUp: () -> Unit = {},
 ) {
     Box(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),

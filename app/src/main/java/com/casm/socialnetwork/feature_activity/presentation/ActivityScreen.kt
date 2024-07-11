@@ -27,14 +27,14 @@ import kotlin.random.Random
 
 @Composable
 fun ActivityScreen(
-    navController: NavController,
+    onNavigateUp: () -> Unit = {},
     viewModel: ActivityViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         StandardToolBar(
-            navController = navController,
+            onNavigateUp = onNavigateUp,
             title = {
                 Text(
                     text = stringResource(id = R.string.your_activity),

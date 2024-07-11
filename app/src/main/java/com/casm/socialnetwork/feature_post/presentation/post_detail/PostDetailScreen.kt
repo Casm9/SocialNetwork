@@ -48,14 +48,14 @@ import com.casm.socialnetwork.core.presentation.ui.theme.TextWhite
 
 @Composable
 fun PostDetailScreen(
-    navController: NavController,
+    onNavigateUp: () -> Unit = {},
     post: Post,
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         StandardToolBar(
-            navController = navController,
+            onNavigateUp = onNavigateUp,
             title = {
                 Text(
                     text = stringResource(id = R.string.your_feed),

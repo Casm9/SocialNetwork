@@ -42,7 +42,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun RegisterScreen(
-    navController: NavController,
+    onPopBackStack: () -> Unit = {},
     scaffoldState: ScaffoldState,
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
@@ -184,7 +184,7 @@ fun RegisterScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .clickable {
-                    navController.popBackStack()
+                    onPopBackStack()
                 }
         )
     }

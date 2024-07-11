@@ -28,7 +28,7 @@ import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 
 @Composable
 fun PersonListScreen(
-    navController: NavController
+    onNavigateUp: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -36,7 +36,7 @@ fun PersonListScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         StandardToolBar(
-            navController = navController,
+            onNavigateUp = onNavigateUp,
             showBackArrow = true,
             title = {
                 Text(

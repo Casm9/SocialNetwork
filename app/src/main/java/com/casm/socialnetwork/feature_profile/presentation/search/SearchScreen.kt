@@ -30,10 +30,12 @@ import com.casm.socialnetwork.core.presentation.ui.theme.IconSizeMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceLarge
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 import com.casm.socialnetwork.core.domain.states.StandardTextFieldState
+import com.casm.socialnetwork.core.util.Screen
 
 @Composable
 fun SearchScreen(
-    navController: NavController,
+    onNavigate: (String) -> Unit = {},
+    onNavigateUp: () -> Unit = {},
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     Column(
@@ -42,7 +44,7 @@ fun SearchScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         StandardToolBar(
-            navController = navController,
+            onNavigateUp = onNavigateUp,
             showBackArrow = true,
             title = {
                 Text(
@@ -94,6 +96,9 @@ fun SearchScreen(
                                     tint = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.size(IconSizeMedium)
                                 )
+                            },
+                            onItemClick = {
+                                onNavigate(Screen.ProfileScreen.route + "?userId=6618e402529d60339bded4f1")
                             }
                         )
                     Spacer(modifier = Modifier.height(SpaceMedium))
