@@ -79,7 +79,7 @@ fun SearchScreen(
                 items(10) {
                         UserProfileItem(
                             user = User(
-                                userId = "6618e402529d60339bded4f1",
+                                userId = "6693b7d1c3832136dd57444c",
                                 profilePictureUrl = "",
                                 username = "Mehmet Can Girgin",
                                 description = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed\n" +
@@ -98,7 +98,7 @@ fun SearchScreen(
                                 )
                             },
                             onItemClick = {
-                                onNavigate(Screen.ProfileScreen.route + "?userId=6618e402529d60339bded4f1")
+                                onNavigate(Screen.ProfileScreen.route + "?userId=6693b7d1c3832136dd57444c")
                             }
                         )
                     Spacer(modifier = Modifier.height(SpaceMedium))

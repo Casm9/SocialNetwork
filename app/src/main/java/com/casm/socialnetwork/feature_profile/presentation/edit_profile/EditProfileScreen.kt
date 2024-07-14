@@ -8,7 +8,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,7 +37,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,7 +44,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.presentation.components.StandardTextField
@@ -55,16 +52,13 @@ import com.casm.socialnetwork.feature_profile.presentation.edit_profile.componen
 import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeLarge
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceLarge
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
-import com.casm.socialnetwork.core.domain.states.StandardTextFieldState
 import com.casm.socialnetwork.core.presentation.util.CropActivityResultContract
 import com.casm.socialnetwork.core.presentation.util.UiEvent
 import com.casm.socialnetwork.core.presentation.util.asString
-import com.casm.socialnetwork.feature_post.presentation.create_post.CreatePostEvent
 import com.casm.socialnetwork.feature_profile.presentation.util.EditProfileError
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import kotlinx.coroutines.flow.collectLatest
-import kotlin.random.Random
 
 @Composable
 fun EditProfileScreen(
@@ -74,32 +68,35 @@ fun EditProfileScreen(
     profilePictureSize: Dp = ProfilePictureSizeLarge
 ) {
     val profileState = viewModel.profileState.value
-    val context = LocalContext.current
 
     val cropProfilePictureLauncher = rememberLauncherForActivityResult(
-        contract = CropActivityResultContract(1f,1f)
+        contract = CropActivityResultContract(1f, 1f)
     ) {
         viewModel.onEvent(EditProfileEvent.CropProfilePicture(it))
     }
-
     val cropBannerImageLauncher = rememberLauncherForActivityResult(
-        contract = CropActivityResultContract(5f,2f)
+        contract = CropActivityResultContract(5f, 2f)
     ) {
         viewModel.onEvent(EditProfileEvent.CropBannerImage(it))
     }
-
     val profilePictureGalleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) {
-        cropProfilePictureLauncher.launch(it!!)
+        if(it == null) {
+            return@rememberLauncherForActivityResult
+        }
+        cropProfilePictureLauncher.launch(it)
     }
-
     val bannerImageGalleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) {
-        cropBannerImageLauncher.launch(it!!)
+        if(it == null) {
+            return@rememberLauncherForActivityResult
+        }
+        cropBannerImageLauncher.launch(it)
     }
-    
+
+    val context = LocalContext.current
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when(event) {
@@ -108,6 +105,10 @@ fun EditProfileScreen(
                         message = event.uiText.asString(context)
                     )
                 }
+                is UiEvent.NavigateUp -> {
+                    onNavigateUp()
+                }
+
                 else -> {}
             }
         }
@@ -120,22 +121,21 @@ fun EditProfileScreen(
             onNavigateUp = onNavigateUp,
             showBackArrow = true,
             navActions = {
-               IconButton(
-                   onClick = {
-                       viewModel.onEvent(EditProfileEvent.UpdateProfile)
-                   }
-               ) {
-                   Icon(
-                       imageVector = Icons.Default.Check,
-                       contentDescription = stringResource(id = R.string.save_changes),
-                       tint = MaterialTheme.colorScheme.onBackground
-                   )
-               }          
+                IconButton(onClick = {
+                    viewModel.onEvent(EditProfileEvent.UpdateProfile)
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = stringResource(id = R.string.save_changes),
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             },
             title = {
                 Text(
                     text = stringResource(id = R.string.edit_your_profile),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         )
@@ -147,13 +147,13 @@ fun EditProfileScreen(
         ) {
             BannerEditSection(
                 bannerImage = rememberImagePainter(
-                    data = profileState.profile?.bannerUrl,
+                    data = viewModel.bannerUri.value ?: profileState.profile?.bannerUrl,
                     builder = {
                         crossfade(true)
                     }
                 ),
                 profileImage = rememberImagePainter(
-                    data = profileState.profile?.profilePictureUrl,
+                    data = viewModel.profilePictureUri.value ?: profileState.profile?.profilePictureUrl,
                     builder = {
                         crossfade(true)
                     }
@@ -177,7 +177,7 @@ fun EditProfileScreen(
                         .fillMaxWidth(),
                     text = viewModel.usernameState.value.text,
                     hint = stringResource(id = R.string.username),
-                    error = when(viewModel.usernameState.value.error) {
+                    error = when (viewModel.usernameState.value.error) {
                         is EditProfileError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
                         else -> ""
                     },
@@ -191,11 +191,10 @@ fun EditProfileScreen(
                 Spacer(modifier = Modifier.height(SpaceMedium))
                 StandardTextField(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background),
+                        .fillMaxWidth(),
                     text = viewModel.githubTextFieldState.value.text,
                     hint = stringResource(id = R.string.github_profile_url),
-                    error = when(viewModel.githubTextFieldState.value.error) {
+                    error = when (viewModel.githubTextFieldState.value.error) {
                         is EditProfileError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
                         else -> ""
                     },
@@ -212,7 +211,7 @@ fun EditProfileScreen(
                         .fillMaxWidth(),
                     text = viewModel.instagramTextFieldState.value.text,
                     hint = stringResource(id = R.string.instagram_profile_url),
-                    error = when(viewModel.instagramTextFieldState.value.error) {
+                    error = when (viewModel.instagramTextFieldState.value.error) {
                         is EditProfileError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
                         else -> ""
                     },
@@ -227,16 +226,16 @@ fun EditProfileScreen(
                 StandardTextField(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    text = viewModel.linkedinTextFieldState.value.text,
+                    text = viewModel.linkedInTextFieldState.value.text,
                     hint = stringResource(id = R.string.linked_in_profile_url),
-                    error = when(viewModel.linkedinTextFieldState.value.error) {
+                    error = when (viewModel.linkedInTextFieldState.value.error) {
                         is EditProfileError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
                         else -> ""
                     },
                     leadingIcon = ImageVector.vectorResource(id = R.drawable.ic_linkedin_icon),
                     onValueChange = {
                         viewModel.onEvent(
-                            EditProfileEvent.EnteredLinkedinUrl(it)
+                            EditProfileEvent.EnteredLinkedInUrl(it)
                         )
                     }
                 )
@@ -246,7 +245,7 @@ fun EditProfileScreen(
                         .fillMaxWidth(),
                     text = viewModel.bioState.value.text,
                     hint = stringResource(id = R.string.your_bio),
-                    error = when(viewModel.bioState.value.error) {
+                    error = when (viewModel.bioState.value.error) {
                         is EditProfileError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
                         else -> ""
                     },
@@ -262,7 +261,7 @@ fun EditProfileScreen(
                 Spacer(modifier = Modifier.height(SpaceMedium))
                 Text(
                     text = stringResource(id = R.string.select_top_3_skills),
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.align(CenterHorizontally)
                 )
@@ -273,16 +272,18 @@ fun EditProfileScreen(
                     mainAxisSpacing = SpaceMedium,
                     crossAxisSpacing = SpaceMedium
                 ) {
-                    viewModel.skills.value.skills.forEach {
+                    viewModel.skills.value.skills.forEach { skill ->
                         Chip(
-                            text = it.name,
-                            selected = it in viewModel.skills.value.selectedSkills
-                        ) {
-
-                        }
+                            text = skill.name,
+                            selected = viewModel.skills.value.selectedSkills.any { it.name == skill.name },
+                            onChipClick = {
+                                viewModel.onEvent(EditProfileEvent.SetSkillSelected(skill))
+                            }
+                        )
                     }
                 }
             }
+
         }
     }
 }
@@ -296,6 +297,7 @@ fun BannerEditSection(
     onProfilePictureClick: () -> Unit = {}
 ) {
     val bannerHeight = (LocalConfiguration.current.screenWidthDp / 2.5f).dp
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -310,7 +312,6 @@ fun BannerEditSection(
                 .height(bannerHeight)
                 .clickable { onBannerClick() }
         )
-
         Image(
             painter = profileImage,
             contentDescription = null,

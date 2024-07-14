@@ -1,12 +1,15 @@
 package com.casm.socialnetwork.feature_profile.domain.use_case
 
 import android.net.Uri
+import android.util.Patterns
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.util.Resource
 import com.casm.socialnetwork.core.util.SimpleResource
 import com.casm.socialnetwork.core.util.UIText
 import com.casm.socialnetwork.feature_profile.domain.model.UpdateProfileData
 import com.casm.socialnetwork.feature_profile.domain.repository.ProfileRepository
+import com.casm.socialnetwork.feature_profile.domain.util.ProfileConstants
+import java.util.regex.Pattern
 
 class UpdateProfileUseCase(
     private val repository: ProfileRepository
@@ -21,6 +24,28 @@ class UpdateProfileUseCase(
                 uiText = UIText.StringResource(R.string.error_username_empty)
             )
         }
+
+        val isValidGithubUrl = ProfileConstants.GITHUB_PROFILE_REGEX.matches(updateProfileData.gitHubUrl)
+        if (!isValidGithubUrl){
+            return Resource.Error(
+                uiText = UIText.StringResource(R.string.error_invalid_github_url)
+            )
+        }
+
+        val isValidInstagramUrl = ProfileConstants.INSTAGRAM_PROFILE_REGEX.matches(updateProfileData.instagramUrl)
+        if (!isValidInstagramUrl){
+            return Resource.Error(
+                uiText = UIText.StringResource(R.string.error_invalid_instagram_url)
+            )
+        }
+
+        val isValidLinkedInUrl = ProfileConstants.LINKED_IN_PROFILE_REGEX.matches(updateProfileData.linkedInUrl)
+        if (!isValidLinkedInUrl){
+            return Resource.Error(
+                uiText = UIText.StringResource(R.string.error_invalid_linkedin_url)
+            )
+        }
+
          return repository.updateProfile(
             updateProfileData = updateProfileData,
             profilePictureUri = profilePictureUri,

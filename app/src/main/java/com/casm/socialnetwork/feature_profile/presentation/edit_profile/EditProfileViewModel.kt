@@ -11,7 +11,6 @@ import com.casm.socialnetwork.core.domain.states.StandardTextFieldState
 import com.casm.socialnetwork.core.presentation.util.UiEvent
 import com.casm.socialnetwork.core.util.Resource
 import com.casm.socialnetwork.core.util.UIText
-import com.casm.socialnetwork.feature_profile.domain.model.Skill
 import com.casm.socialnetwork.feature_profile.domain.model.UpdateProfileData
 import com.casm.socialnetwork.feature_profile.domain.use_case.ProfileUseCases
 import com.casm.socialnetwork.feature_profile.presentation.profile.ProfileState
@@ -24,9 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     private val profileUseCases: ProfileUseCases,
-    saveStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -40,8 +38,8 @@ class EditProfileViewModel @Inject constructor(
     private val _instagramTextFieldState = mutableStateOf(StandardTextFieldState())
     val instagramTextFieldState: State<StandardTextFieldState> = _instagramTextFieldState
 
-    private val _linkedinTextFieldState = mutableStateOf(StandardTextFieldState())
-    val linkedinTextFieldState: State<StandardTextFieldState> = _linkedinTextFieldState
+    private val _linkedInTextFieldState = mutableStateOf(StandardTextFieldState())
+    val linkedInTextFieldState: State<StandardTextFieldState> = _linkedInTextFieldState
 
     private val _bioState = mutableStateOf(StandardTextFieldState())
     val bioState: State<StandardTextFieldState> = _bioState
@@ -58,9 +56,8 @@ class EditProfileViewModel @Inject constructor(
     private val _profilePictureUri = mutableStateOf<Uri?>(null)
     val profilePictureUri: State<Uri?> = _profilePictureUri
 
-
     init {
-        saveStateHandle.get<String>("userId")?.let { userId ->
+        savedStateHandle.get<String>("userId")?.let { userId ->
             getSkills()
             getProfile(userId)
         }
@@ -72,7 +69,7 @@ class EditProfileViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     _skills.value = skills.value.copy(
-                        skills = result.data ?: run {
+                        skills = result.data ?: kotlin.run {
                             _eventFlow.emit(
                                 UiEvent.ShowSnackbar(
                                     UIText.StringResource(R.string.error_couldnt_load_skills)
@@ -82,13 +79,9 @@ class EditProfileViewModel @Inject constructor(
                         }
                     )
                 }
-
                 is Resource.Error -> {
-                    _eventFlow.emit(
-                        UiEvent.ShowSnackbar(result.uiText ?: UIText.unknownError())
-                    )
+                    _eventFlow.emit(UiEvent.ShowSnackbar(result.uiText ?: UIText.unknownError()))
                     return@launch
-
                 }
             }
         }
@@ -100,7 +93,7 @@ class EditProfileViewModel @Inject constructor(
             val result = profileUseCases.getProfile(userId)
             when (result) {
                 is Resource.Success -> {
-                    val profile = result.data ?: run {
+                    val profile = result.data ?: kotlin.run {
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
                                 UIText.StringResource(R.string.error_couldnt_load_profile)
@@ -108,36 +101,32 @@ class EditProfileViewModel @Inject constructor(
                         )
                         return@launch
                     }
-
                     _usernameState.value = usernameState.value.copy(
                         text = profile.username
                     )
-                    _githubTextFieldState.value = githubTextFieldState.value.copy(
+                    _githubTextFieldState.value = _githubTextFieldState.value.copy(
                         text = profile.gitHubUrl ?: ""
                     )
-                    _instagramTextFieldState.value = instagramTextFieldState.value.copy(
+                    _instagramTextFieldState.value = _instagramTextFieldState.value.copy(
                         text = profile.instagramUrl ?: ""
                     )
-                    _linkedinTextFieldState.value = linkedinTextFieldState.value.copy(
+                    _linkedInTextFieldState.value = _linkedInTextFieldState.value.copy(
                         text = profile.linkedInUrl ?: ""
                     )
                     _bioState.value = bioState.value.copy(
                         text = profile.bio
                     )
-                    _skills.value = skills.value.copy(
+                    println("Profile top skills: ${profile.topSkills}")
+                    _skills.value = _skills.value.copy(
                         selectedSkills = profile.topSkills
                     )
                     _profileState.value = profileState.value.copy(
                         profile = profile,
                         isLoading = false
                     )
-
                 }
-
                 is Resource.Error -> {
-                    _eventFlow.emit(
-                        UiEvent.ShowSnackbar(result.uiText ?: UIText.unknownError())
-                    )
+                    _eventFlow.emit(UiEvent.ShowSnackbar(result.uiText ?: UIText.unknownError()))
                     return@launch
                 }
             }
@@ -145,23 +134,23 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private fun updateProfile() {
-        viewModelScope.launch{
+        viewModelScope.launch {
             val result = profileUseCases.updateProfile(
                 updateProfileData = UpdateProfileData(
                     username = usernameState.value.text,
                     bio = bioState.value.text,
                     gitHubUrl = githubTextFieldState.value.text,
                     instagramUrl = instagramTextFieldState.value.text,
-                    linkedinUrl = linkedinTextFieldState.value.text,
-                    skills = skills.value.selectedSkills,
+                    linkedInUrl = linkedInTextFieldState.value.text,
+                    skills = skills.value.selectedSkills
                 ),
                 profilePictureUri = profilePictureUri.value,
                 bannerUri = bannerUri.value
             )
-
             when (result) {
                 is Resource.Success -> {
                     _eventFlow.emit(UiEvent.ShowSnackbar(UIText.StringResource(R.string.updated_profile)))
+                    _eventFlow.emit(UiEvent.NavigateUp)
                 }
                 is Resource.Error -> {
                     _eventFlow.emit(UiEvent.ShowSnackbar(result.uiText ?: UIText.unknownError()))
@@ -169,6 +158,7 @@ class EditProfileViewModel @Inject constructor(
             }
         }
     }
+
     fun onEvent(event: EditProfileEvent) {
         when (event) {
             is EditProfileEvent.EnteredUsername -> {
@@ -176,43 +166,57 @@ class EditProfileViewModel @Inject constructor(
                     text = event.value
                 )
             }
-
             is EditProfileEvent.EnteredGitHubUrl -> {
-                _githubTextFieldState.value = githubTextFieldState.value.copy(
+                _githubTextFieldState.value = _githubTextFieldState.value.copy(
                     text = event.value
                 )
             }
-
             is EditProfileEvent.EnteredInstagramUrl -> {
-                _instagramTextFieldState.value = instagramTextFieldState.value.copy(
+                _instagramTextFieldState.value = _instagramTextFieldState.value.copy(
                     text = event.value
                 )
             }
-
-            is EditProfileEvent.EnteredLinkedinUrl -> {
-                _linkedinTextFieldState.value = linkedinTextFieldState.value.copy(
+            is EditProfileEvent.EnteredLinkedInUrl -> {
+                _linkedInTextFieldState.value = _linkedInTextFieldState.value.copy(
                     text = event.value
                 )
             }
-
             is EditProfileEvent.EnteredBio -> {
-                _bioState.value = bioState.value.copy(
+                _bioState.value = _bioState.value.copy(
                     text = event.value
                 )
             }
-
             is EditProfileEvent.CropProfilePicture -> {
                 _profilePictureUri.value = event.uri
             }
-
             is EditProfileEvent.CropBannerImage -> {
                 _bannerUri.value = event.uri
             }
-
             is EditProfileEvent.SetSkillSelected -> {
-
+                val result = profileUseCases.setSkillSelected(
+                    selectedSkills = skills.value.selectedSkills,
+                    event.skill
+                )
+                viewModelScope.launch {
+                    when (result) {
+                        is Resource.Success -> {
+                            _skills.value = skills.value.copy(
+                                selectedSkills = result.data ?: kotlin.run {
+                                    _eventFlow.emit(UiEvent.ShowSnackbar(UIText.unknownError()))
+                                    return@launch
+                                }
+                            )
+                        }
+                        is Resource.Error -> {
+                            _eventFlow.emit(
+                                UiEvent.ShowSnackbar(
+                                    uiText = result.uiText ?: UIText.unknownError()
+                                )
+                            )
+                        }
+                    }
+                }
             }
-
             is EditProfileEvent.UpdateProfile -> {
                 updateProfile()
             }

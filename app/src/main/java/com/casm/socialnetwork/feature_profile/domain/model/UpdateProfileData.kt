@@ -5,6 +5,6 @@ data class UpdateProfileData(
     val bio: String,
     val gitHubUrl: String,
     val instagramUrl: String,
-    val linkedinUrl: String,
+    val linkedInUrl: String,
     val skills: List<Skill>
 )

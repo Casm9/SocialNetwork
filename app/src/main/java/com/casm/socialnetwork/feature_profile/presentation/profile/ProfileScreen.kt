@@ -51,6 +51,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ProfileScreen(
+    userId: String,
     onNavigate: (String) -> Unit = {},
     scaffoldState: ScaffoldState,
     profilePictureSize: Dp = ProfilePictureSizeLarge,
@@ -100,6 +101,7 @@ fun ProfileScreen(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
+        viewModel.getProfile(userId)
         viewModel.eventFlow.collectLatest { event ->
             when(event) {
                 is UiEvent.ShowSnackbar -> {
@@ -205,7 +207,12 @@ fun ProfileScreen(
                     bannerUrl = profile.bannerUrl
                 )
                 Image(
-                    painter = rememberImagePainter(data = profile.profilePictureUrl ),
+                    painter = rememberImagePainter(
+                        data = profile.profilePictureUrl,
+                        builder = {
+                            crossfade(true)
+                        }
+                    ),
                     contentDescription = stringResource(id = R.string.profile_image),
                     modifier = Modifier
                         .align(CenterHorizontally)

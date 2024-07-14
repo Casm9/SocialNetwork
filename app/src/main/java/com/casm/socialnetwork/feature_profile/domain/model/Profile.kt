@@ -12,7 +12,7 @@ data class Profile(
     val topSkills: List<Skill>,
     val gitHubUrl: String?,
     val instagramUrl: String?,
-    val linkedInUrl:String?,
+    val linkedInUrl: String?,
     val isOwnProfile: Boolean,
     val isFollowing: Boolean
 )
