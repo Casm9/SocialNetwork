@@ -1,8 +1,10 @@
 package com.casm.socialnetwork.di
 
+import com.casm.socialnetwork.core.data.remote.PostApi
 import com.casm.socialnetwork.feature_profile.data.remote.ProfileApi
 import com.casm.socialnetwork.feature_profile.data.repository.ProfileRepositoryImpl
 import com.casm.socialnetwork.feature_profile.domain.repository.ProfileRepository
+import com.casm.socialnetwork.feature_profile.domain.use_case.GetPostsForProfileUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetProfileUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetSkillsUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.ProfileUseCases
@@ -16,7 +18,6 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import javax.inject.Singleton
 
 @Module
@@ -36,8 +37,8 @@ object ProfileModule {
 
     @Provides
     @Singleton
-    fun provideProfileRepository(api: ProfileApi, gson: Gson): ProfileRepository {
-        return ProfileRepositoryImpl(api, gson)
+    fun provideProfileRepository(profileProfile: ProfileApi, postApi: PostApi, gson: Gson): ProfileRepository {
+        return ProfileRepositoryImpl(profileProfile, postApi, gson)
     }
 
     @Provides
@@ -47,7 +48,8 @@ object ProfileModule {
             getProfile = GetProfileUseCase(repository),
             getSkills = GetSkillsUseCase(repository),
             updateProfile = UpdateProfileUseCase(repository),
-            setSkillSelected = SetSkillSelectedUseCase()
+            setSkillSelected = SetSkillSelectedUseCase(),
+            getPostsForProfile = GetPostsForProfileUseCase(repository)
         )
     }
 }

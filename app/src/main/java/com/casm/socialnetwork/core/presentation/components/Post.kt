@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.core.presentation.ui.theme.HintGray
@@ -66,9 +67,11 @@ fun Post(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(y = if(showProfileImage) {
-                    ProfilePictureSizeMedium / 2f
-                } else 0.dp)
+                .offset(
+                    y = if (showProfileImage) {
+                        ProfilePictureSizeMedium / 2f
+                    } else 0.dp
+                )
                 .clip(MaterialTheme.shapes.medium)
                 .shadow(5.dp)
                 .background(MediumGray)
@@ -77,7 +80,12 @@ fun Post(
                 }
         ) {
             Image(
-                painterResource(id = R.drawable.beach),
+                painter = rememberImagePainter(
+                    data = post.imageUrl,
+                    builder = {
+                        crossfade(true)
+                    }
+                ),
                 contentDescription = "Post image"
             )
             Column(
@@ -86,7 +94,7 @@ fun Post(
                     .padding(SpaceMedium)
             ) {
                 ActionRow(
-                    username = "Casm",
+                    username = post.username,
                     modifier = Modifier.fillMaxWidth(),
                     onLikeClick = { isLiked ->
 
@@ -146,7 +154,12 @@ fun Post(
         }
         if (showProfileImage) {
             Image(
-                painterResource(id = R.drawable.pup),
+                painter = rememberImagePainter(
+                    data = post.profilePictureUrl,
+                    builder = {
+                        crossfade(true)
+                    }
+                ),
                 contentDescription = "Profile picture",
                 modifier = Modifier
                     .size(ProfilePictureSizeMedium)

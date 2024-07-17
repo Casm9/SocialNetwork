@@ -1,7 +1,6 @@
 package com.casm.socialnetwork.di
 
-import android.content.Context
-import com.casm.socialnetwork.feature_post.data.remote.PostApi
+import com.casm.socialnetwork.core.data.remote.PostApi
 import com.casm.socialnetwork.feature_post.data.repository.PostRepositoryImpl
 import com.casm.socialnetwork.feature_post.domain.repository.PostRepository
 import com.casm.socialnetwork.feature_post.domain.use_case.CreatePostUseCase
@@ -11,7 +10,6 @@ import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

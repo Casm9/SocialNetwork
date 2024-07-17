@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
+import com.casm.socialnetwork.core.domain.use_case.GetOwnUserIdUseCase
 import com.casm.socialnetwork.core.presentation.util.UiEvent
 import com.casm.socialnetwork.core.util.Resource
 import com.casm.socialnetwork.core.util.UIText
@@ -12,12 +14,15 @@ import com.casm.socialnetwork.feature_profile.domain.use_case.ProfileUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val profileUseCases: ProfileUseCases
+    private val profileUseCases: ProfileUseCases,
+    private val getOwnUserId: GetOwnUserIdUseCase,
+    savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
     private val _toolbarState = mutableStateOf(ProfileToolbarState())
@@ -28,6 +33,11 @@ class ProfileViewModel @Inject constructor(
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    val posts = profileUseCases.getPostsForProfile(
+        savedStateHandle.get<String>("userId") ?: getOwnUserId()
+    ).cachedIn(viewModelScope)
+
 
     fun setExpandedRatio(ratio: Float) {
         _toolbarState.value = _toolbarState.value.copy(expandedRatio = ratio)
@@ -47,12 +57,14 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-     fun getProfile(userId: String) {
+     fun getProfile(userId: String?) {
         viewModelScope.launch {
            _state.value = state.value.copy(
                isLoading = true
            )
-            val result = profileUseCases.getProfile(userId)
+            val result = profileUseCases.getProfile(
+                userId ?: getOwnUserId()
+            )
             when(result) {
                 is Resource.Success -> {
                     _state.value = state.value.copy(

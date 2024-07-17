@@ -1,4 +1,4 @@
-package com.casm.socialnetwork.feature_post.data.remote
+package com.casm.socialnetwork.core.data.remote
 
 import com.casm.socialnetwork.core.data.dto.response.BasicApiResponse
 import com.casm.socialnetwork.core.domain.models.Post
@@ -20,6 +20,13 @@ interface PostApi {
        @Query("pageSize") pageSize: Int
     ): List<Post>
 
+
+    @GET("/api/user/posts")
+    suspend fun getPostsForProfile(
+        @Query("userId") userId: String,
+        @Query("page") page: Int,
+        @Query("pageSize") pageSize: Int
+    ): List<Post>
 
     @Multipart
     @POST("/api/post/create")

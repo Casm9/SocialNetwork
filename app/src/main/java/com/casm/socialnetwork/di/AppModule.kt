@@ -3,6 +3,7 @@ package com.casm.socialnetwork.di
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import com.casm.socialnetwork.core.domain.use_case.GetOwnUserIdUseCase
 import com.casm.socialnetwork.core.util.Constants
 import com.casm.socialnetwork.core.util.Constants.SHARED_PREF_NAME
 import com.google.gson.Gson
@@ -25,24 +26,28 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideJwtToken(sharedPreferences: SharedPreferences): String {
-        return sharedPreferences.getString(Constants.KEY_JWT_TOKEN, "") ?: ""
-    }
-
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(token: String): OkHttpClient {
-        return OkHttpClient.Builder().addInterceptor {
-            val modifiedRequest =
-                it.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-            it.proceed(modifiedRequest)
-        }.build()
+    fun provideOkHttpClient(sharedPreferences: SharedPreferences): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor {
+                val token = sharedPreferences.getString(Constants.KEY_JWT_TOKEN, "")
+                val modifiedRequest = it.request().newBuilder()
+                    .addHeader("Authorization", "Bearer $token")
+                    .build()
+                it.proceed(modifiedRequest)
+            }
+            .build()
     }
 
     @Provides
     @Singleton
     fun provideGson(): Gson {
         return Gson()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetOwnUserIdUseCase(sharedPreferences: SharedPreferences): GetOwnUserIdUseCase {
+        return GetOwnUserIdUseCase(sharedPreferences)
     }
 }
 
