@@ -1,6 +1,6 @@
 package com.casm.socialnetwork.feature_auth.presentation.util
 
-
+import com.casm.socialnetwork.core.util.Error
 
 sealed class AuthError: Error() {
     data object FieldEmpty: AuthError()

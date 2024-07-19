@@ -31,6 +31,7 @@ import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
 fun ProfileHeaderSection(
     user: User,
     modifier: Modifier = Modifier,
+    isFollowing: Boolean = true,
     isOwnProfile: Boolean = true,
     onEditClick: () -> Unit = {},
 ) {
@@ -79,7 +80,11 @@ fun ProfileHeaderSection(
             Spacer(modifier = Modifier.height(SpaceLarge))
         }
 
-        ProfileStats(user = user, isOwnProfile = isOwnProfile)
+        ProfileStats(
+            user = user,
+            isOwnProfile = isOwnProfile,
+            isFollowing = isFollowing
+        )
     }
 
 }

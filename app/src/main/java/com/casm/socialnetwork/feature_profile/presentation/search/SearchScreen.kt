@@ -1,6 +1,7 @@
 package com.casm.socialnetwork.feature_profile.presentation.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,18 +10,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.User
 import com.casm.socialnetwork.core.presentation.components.StandardTextField
@@ -38,74 +43,93 @@ fun SearchScreen(
     onNavigateUp: () -> Unit = {},
     viewModel: SearchViewModel = hiltViewModel()
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+    val state = viewModel.searchState.value
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        StandardToolBar(
-            onNavigateUp = onNavigateUp,
-            showBackArrow = true,
-            title = {
-                Text(
-                    text = stringResource(id = R.string.search_for_users),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(SpaceLarge)
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            StandardTextField(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                text = viewModel.searchState.value.text,
-                hint = stringResource(id = R.string.search),
-                error = "",
-                leadingIcon = Icons.Default.Search,
-                onValueChange = {
-                    viewModel.setSearchState(
-                        StandardTextFieldState(text = it)
+            StandardToolBar(
+                onNavigateUp = onNavigateUp,
+                showBackArrow = true,
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.search_for_users),
+                        fontWeight = FontWeight.Bold
                     )
                 }
             )
-            Spacer(modifier = Modifier.height(SpaceLarge))
-            LazyColumn(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(SpaceLarge)
             ) {
-                items(10) {
+                StandardTextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = viewModel.searchFieldState.value.text,
+                    hint = stringResource(id = R.string.search),
+                    error = "",
+                    leadingIcon = Icons.Default.Search,
+                    onValueChange = {
+                        viewModel.onEvent(SearchEvent.Query(it))
+                    }
+                )
+                Spacer(modifier = Modifier.height(SpaceLarge))
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    items(state.userItems) { user ->
                         UserProfileItem(
                             user = User(
-                                userId = "6693b7d1c3832136dd57444c",
-                                profilePictureUrl = "",
-                                username = "Mehmet Can Girgin",
-                                description = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed\n" +
-                                        "diam nonumy eirmod tempor invidunt ut labore et dolore \n" +
-                                        "magna aliquyam erat, sed diam voluptua",
-                                followerCount = 62,
-                                followingCount = 23,
-                                postCount = 12
+                                userId = user.userId,
+                                profilePictureUrl = user.profilePictureUrl,
+                                username = user.username,
+                                description = user.bio,
+                                followerCount = 0,
+                                followingCount = 0,
+                                postCount = 0
                             ),
                             actionIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.PersonAdd,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onBackground,
+                                IconButton(
+                                    onClick = {
+                                        viewModel.onEvent(SearchEvent.ToggleFollowState(user.userId))
+                                    },
                                     modifier = Modifier.size(IconSizeMedium)
-                                )
+
+                                ) {
+                                    Icon(
+                                        imageVector = if (user.isFollowing) {
+                                            Icons.Default.PersonRemove
+                                        } else {
+                                            Icons.Default.PersonAdd
+                                        },
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onBackground,
+                                    )
+                                }
+
                             },
                             onItemClick = {
-                                onNavigate(Screen.ProfileScreen.route + "?userId=6693b7d1c3832136dd57444c")
+                                onNavigate(Screen.ProfileScreen.route + "?userId=${user.userId}")
                             }
                         )
-                    Spacer(modifier = Modifier.height(SpaceMedium))
+                        Spacer(modifier = Modifier.height(SpaceMedium))
 
 
+                    }
                 }
             }
         }
+        if (state.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
     }
+
 }

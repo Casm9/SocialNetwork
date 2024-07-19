@@ -8,7 +8,9 @@ import com.casm.socialnetwork.feature_profile.domain.use_case.GetPostsForProfile
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetProfileUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetSkillsUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.ProfileUseCases
+import com.casm.socialnetwork.feature_profile.domain.use_case.SearchUserUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.SetSkillSelectedUseCase
+import com.casm.socialnetwork.feature_profile.domain.use_case.ToggleFollowStateForUserUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.UpdateProfileUseCase
 import com.google.gson.Gson
 import dagger.Module
@@ -49,7 +51,9 @@ object ProfileModule {
             getSkills = GetSkillsUseCase(repository),
             updateProfile = UpdateProfileUseCase(repository),
             setSkillSelected = SetSkillSelectedUseCase(),
-            getPostsForProfile = GetPostsForProfileUseCase(repository)
+            getPostsForProfile = GetPostsForProfileUseCase(repository),
+            searchUser = SearchUserUseCase(repository),
+            toggleFollowStateForUser = ToggleFollowStateForUserUseCase(repository)
         )
     }
 }

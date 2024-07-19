@@ -1,4 +1,4 @@
-package com.casm.socialnetwork.feature_profile.domain.model
+package com.casm.socialnetwork.core.domain.models
 
 data class UserItem(
     val userId: String,

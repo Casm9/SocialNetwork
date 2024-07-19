@@ -1,9 +1,8 @@
-package com.casm.socialnetwork.feature_profile.data.remote.response
+package com.casm.socialnetwork.core.data.dto.response
 
-import com.casm.socialnetwork.core.domain.models.User
-import com.casm.socialnetwork.feature_profile.domain.model.UserItem
+import com.casm.socialnetwork.core.domain.models.UserItem
 
-data class UserResponseItem(
+data class UserItemDto(
     val userId: String,
     val username: String,
     val profilePictureUrl: String,

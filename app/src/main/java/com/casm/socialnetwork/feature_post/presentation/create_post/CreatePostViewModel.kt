@@ -12,11 +12,9 @@ import com.casm.socialnetwork.core.util.Resource
 import com.casm.socialnetwork.core.util.UIText
 import com.casm.socialnetwork.feature_post.domain.use_case.PostUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel

@@ -8,12 +8,14 @@ import androidx.paging.PagingData
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.data.remote.PostApi
 import com.casm.socialnetwork.core.domain.models.Post
+import com.casm.socialnetwork.core.domain.models.UserItem
 import com.casm.socialnetwork.core.util.Constants
 import com.casm.socialnetwork.core.util.Resource
 import com.casm.socialnetwork.core.util.SimpleResource
 import com.casm.socialnetwork.core.util.UIText
 import com.casm.socialnetwork.feature_auth.data.paging.PostSource
 import com.casm.socialnetwork.feature_profile.data.remote.ProfileApi
+import com.casm.socialnetwork.feature_profile.data.remote.request.FollowUpdateRequest
 import com.casm.socialnetwork.feature_profile.domain.model.Profile
 import com.casm.socialnetwork.feature_profile.domain.model.Skill
 import com.casm.socialnetwork.feature_profile.domain.model.UpdateProfileData
@@ -120,6 +122,74 @@ class ProfileRepositoryImpl(
             Resource.Success(
                 data = response.map { it.toSkill() }
             )
+
+        } catch (e: IOException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_couldnt_reach_server)
+            )
+        } catch (e: HttpException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_someting_went_wrong)
+            )
+        }
+    }
+
+    override suspend fun searchUser(query: String): Resource<List<UserItem>> {
+        return try {
+            val response = profileApi.searchUser(query)
+            Resource.Success(
+                data = response.map { it.toUserItem() }
+            )
+
+        } catch (e: IOException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_couldnt_reach_server)
+            )
+        } catch (e: HttpException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_someting_went_wrong)
+            )
+        }
+    }
+
+    override suspend fun followUser(userId: String): SimpleResource {
+        return try {
+            val response = profileApi.followUser(
+                request = FollowUpdateRequest(userId)
+            )
+            if (response.successful) {
+                Resource.Success(Unit)
+            } else {
+                response.message?.let { msg ->
+                    Resource.Error(UIText.DynamicString(msg))
+                } ?: Resource.Error(UIText.StringResource(R.string.error_unknown))
+
+            }
+
+        } catch (e: IOException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_couldnt_reach_server)
+            )
+        } catch (e: HttpException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_someting_went_wrong)
+            )
+        }
+    }
+
+    override suspend fun unfollowUser(userId: String): SimpleResource {
+        return try {
+            val response = profileApi.unfollowUser(
+                userId = userId
+            )
+            if (response.successful) {
+                Resource.Success(Unit)
+            } else {
+                response.message?.let { msg ->
+                    Resource.Error(UIText.DynamicString(msg))
+                } ?: Resource.Error(UIText.StringResource(R.string.error_unknown))
+
+            }
 
         } catch (e: IOException) {
             Resource.Error(
