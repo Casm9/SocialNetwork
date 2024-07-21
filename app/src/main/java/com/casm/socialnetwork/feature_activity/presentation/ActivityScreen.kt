@@ -32,6 +32,7 @@ import kotlin.random.Random
 @Composable
 fun ActivityScreen(
     onNavigateUp: () -> Unit = {},
+    onNavigate: (String) -> Unit = {},
     viewModel: ActivityViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
@@ -68,7 +69,8 @@ fun ActivityScreen(
                                 formattedTime = activity.formattedTime,
                                 parentId = activity.parentId,
                                 username = activity.username
-                            )
+                            ),
+                            onNavigate = onNavigate
                         )
                     }
                 }

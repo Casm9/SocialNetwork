@@ -69,6 +69,7 @@ fun Navigation(
         composable(Screen.ActivityScreen.route) {
             ActivityScreen(
                 onNavigateUp = navController::navigateUp,
+                onNavigate = navController::navigate,
             )
         }
         composable(
@@ -113,21 +114,18 @@ fun Navigation(
                 onNavigate = navController::navigate,
             )
         }
-        composable(Screen.PostDetailScreen.route) {
+        composable(
+            route = Screen.PostDetailScreen.route + "/{postId}",
+            arguments = listOf(
+                navArgument(
+                    name = "postId"
+                ) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
             PostDetailScreen(
-                onNavigateUp = navController::navigateUp,
-                post = Post(
-                    username = "Casm",
-                    imageUrl = "",
-                    profilePictureUrl = "",
-                    description = "Test test test test test test test\n" +
-                            "test test test test \n" +
-                            "test test tes test... " + "Test test test test test test test\n" +
-                            "test test test test \n" +
-                            "test test tes test... ",
-                    likeCount = 16,
-                    commentCount = 7
-                )
+                onNavigateUp = navController::navigateUp
             )
         }
         composable(Screen.PersonListScreen.route) {

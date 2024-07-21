@@ -94,16 +94,12 @@ fun Post(
                     .padding(SpaceMedium)
             ) {
                 ActionRow(
-                    username = post.username,
+                    username = "Casm",
                     modifier = Modifier.fillMaxWidth(),
-                    onLikeClick = { isLiked ->
-
-                    },
+                    onLikeClick = {},
                     onCommentClick = {},
                     onShareClick = {},
-                    onUsernameClick = { username ->
-
-                    }
+                    onUsernameClick = {}
                 )
                 Spacer(modifier = Modifier.height(SpaceSmall))
                 Text(

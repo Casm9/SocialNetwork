@@ -13,6 +13,7 @@ import com.casm.socialnetwork.core.util.SimpleResource
 import com.casm.socialnetwork.core.util.UIText
 import com.casm.socialnetwork.feature_auth.data.paging.PostSource
 import com.casm.socialnetwork.core.data.remote.PostApi
+import com.casm.socialnetwork.core.domain.models.Comment
 import com.casm.socialnetwork.feature_post.data.remote.request.CreatePostRequest
 import com.casm.socialnetwork.feature_post.domain.repository.PostRepository
 import com.google.gson.Gson
@@ -60,6 +61,44 @@ class PostRepositoryImpl(
 
             }
 
+        } catch (e: IOException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_couldnt_reach_server)
+            )
+        } catch (e: HttpException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_someting_went_wrong)
+            )
+        }
+    }
+
+    override suspend fun getPostDetails(postId: String): Resource<Post> {
+        return try {
+            val response = api.getPostDetails(postId = postId)
+            if (response.successful) {
+                Resource.Success(response.data)
+            } else {
+                response.message?.let { msg ->
+                    Resource.Error(UIText.DynamicString(msg))
+                } ?: Resource.Error(UIText.StringResource(R.string.error_unknown))
+            }
+        } catch (e: IOException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_couldnt_reach_server)
+            )
+        } catch (e: HttpException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_someting_went_wrong)
+            )
+        }
+    }
+
+    override suspend fun getCommentsForPost(postId: String): Resource<List<Comment>> {
+        return try {
+            val comments = api.getCommentsForPost(postId = postId).map {
+                it.toComment()
+            }
+            Resource.Success(comments)
         } catch (e: IOException) {
             Resource.Error(
                 uiText = UIText.StringResource(R.string.error_couldnt_reach_server)

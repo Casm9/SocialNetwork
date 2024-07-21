@@ -15,11 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,7 +34,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.Comment
 import com.casm.socialnetwork.core.domain.models.Post
@@ -49,8 +53,9 @@ import com.casm.socialnetwork.core.presentation.ui.theme.TextWhite
 @Composable
 fun PostDetailScreen(
     onNavigateUp: () -> Unit = {},
-    post: Post,
+    viewModel: PostDetailViewModel = hiltViewModel()
 ) {
+    val state = viewModel.state.value
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -87,77 +92,86 @@ fun PostDetailScreen(
                                 .clip(MaterialTheme.shapes.medium)
                                 .shadow(5.dp)
                                 .background(MediumGray)
-                        ){
-                            Image(
-                                painterResource(id = R.drawable.beach),
-                                contentDescription = "Post image",
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(SpaceLarge)
-                            ) {
-                                ActionRow(
-                                    username = "Casm",
-                                    modifier = Modifier.fillMaxWidth(),
-                                    onLikeClick = { isLiked ->
-
-                                    },
-                                    onCommentClick = {},
-                                    onShareClick = {},
-                                    onUsernameClick = { username ->
-
-                                    }
-                                )
-                                Spacer(modifier = Modifier.height(SpaceSmall))
-                                Text(
-                                    text = post.description,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = TextWhite,
-                                )
-                                Spacer(modifier = Modifier.height(SpaceMedium))
-                                Text(
-                                    text = stringResource(
-                                        id = R.string.liked_by_x_people,
-                                        post.likeCount
+                        ) {
+                            state.post?.let { post ->
+                                Image(
+                                    rememberImagePainter(
+                                        data = post.imageUrl,
+                                        builder = {
+                                            crossfade(true)
+                                        }
                                     ),
-                                    fontWeight = FontWeight.Bold,
-                                    style = MaterialTheme.typography.bodyMedium,
+                                    contentDescription = stringResource(id = R.string.post_image),
+                                    modifier = Modifier.fillMaxWidth()
                                 )
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(SpaceLarge)
+                                ) {
+                                    ActionRow(
+                                        username = "Casm",
+                                        modifier = Modifier.fillMaxWidth(),
+                                        onLikeClick = {},
+                                        onCommentClick = {},
+                                        onShareClick = {},
+                                        onUsernameClick = {}
+                                    )
+                                    Spacer(modifier = Modifier.height(SpaceSmall))
+                                    Text(
+                                        text = post.description,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = TextWhite,
+                                    )
+                                    Spacer(modifier = Modifier.height(SpaceMedium))
+                                    Text(
+                                        text = stringResource(
+                                            id = R.string.liked_by_x_people,
+                                            post.likeCount
+                                        ),
+                                        fontWeight = FontWeight.Bold,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                    )
+                                }
                             }
+
                         }
                         Image(
-                            painterResource(id = R.drawable.pup),
+                            rememberImagePainter(
+                                data = state.post?.profilePictureUrl,
+                                builder = {
+                                    crossfade(true)
+                                }
+                            ),
                             contentDescription = "Profile picture",
                             modifier = Modifier
                                 .size(ProfilePictureSizeMedium)
                                 .clip(CircleShape)
                                 .align(Alignment.TopCenter)
                         )
+
+                        if (state.isLoadingPost) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+
                     }
 
                 }
                 Spacer(modifier = Modifier.height(SpaceLarge))
             }
 
-            items(20) {
+            items(state.comments) { comment ->
                 Comment(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = SpaceLarge, vertical = SpaceSmall),
-                    comment = Comment(
-                        username = "Casm",
-                        comment = "Test test test test test test test test test test test test\n" +
-                                "test test test test test test test test test test test test \n" +
-                                "test test test test test test test test test test"
-                    )
+                    comment = comment
                 )
             }
         }
     }
-
-
 
 
 }
@@ -165,7 +179,7 @@ fun PostDetailScreen(
 @Composable
 fun Comment(
     modifier: Modifier = Modifier,
-    comment: Comment = Comment(),
+    comment: Comment,
     onLikedClick: (Boolean) -> Unit = {}
 ) {
     Card(
@@ -187,7 +201,12 @@ fun Comment(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.pup),
+                        painter = rememberImagePainter(
+                            data = comment.profilePictureUrl,
+                            builder = {
+                                crossfade(true)
+                            }
+                        ),
                         contentDescription = null,
                         modifier = Modifier
                             .clip(CircleShape)
@@ -202,7 +221,7 @@ fun Comment(
                 }
 
                 Text(
-                    text = "2 days ago",
+                    text = comment.formattedTime,
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -219,13 +238,18 @@ fun Comment(
                 Spacer(modifier = Modifier.width(SpaceSmall))
                 IconButton(
                     onClick = {
-                    onLikedClick(comment.isLiked)
-                },
+                        onLikedClick(comment.isLiked)
+                    },
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Favorite,
-                        contentDescription = if(comment.isLiked) {
+                        tint = if (comment.isLiked) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onBackground
+                        },
+                        contentDescription = if (comment.isLiked) {
                             stringResource(id = R.string.unlike)
                         } else stringResource(id = R.string.like)
                     )

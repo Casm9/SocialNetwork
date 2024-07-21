@@ -4,6 +4,8 @@ import com.casm.socialnetwork.core.data.remote.PostApi
 import com.casm.socialnetwork.feature_post.data.repository.PostRepositoryImpl
 import com.casm.socialnetwork.feature_post.domain.repository.PostRepository
 import com.casm.socialnetwork.feature_post.domain.use_case.CreatePostUseCase
+import com.casm.socialnetwork.feature_post.domain.use_case.GetCommentsForPostUseCase
+import com.casm.socialnetwork.feature_post.domain.use_case.GetPostDetailsUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.GetPostsForFollowsUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.PostUseCases
 import com.google.gson.Gson
@@ -47,7 +49,9 @@ object PostModule {
     fun providePostUseCases(repository: PostRepository): PostUseCases {
         return PostUseCases(
             getPostsForFollowsUseCase = GetPostsForFollowsUseCase(repository),
-            createPostUseCase = CreatePostUseCase(repository)
+            createPostUseCase = CreatePostUseCase(repository),
+            getPostDetails = GetPostDetailsUseCase(repository),
+            getCommentsForPost = GetCommentsForPostUseCase(repository)
         )
     }
 }
