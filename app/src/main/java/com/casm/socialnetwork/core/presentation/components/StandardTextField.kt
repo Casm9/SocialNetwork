@@ -67,8 +67,9 @@ fun StandardTextField(
 ) {
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
+            .then(modifier)
     ) {
         TextField(
             value = text,

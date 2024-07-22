@@ -1,9 +1,10 @@
-package com.casm.socialnetwork.core.data.remote
+package com.casm.socialnetwork.feature_post.data.remote
 
 import com.casm.socialnetwork.core.data.dto.response.BasicApiResponse
 import com.casm.socialnetwork.core.domain.models.Comment
 import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.feature_post.data.remote.dto.CommentDto
+import com.casm.socialnetwork.feature_post.data.remote.request.CreateCommentRequest
 import com.casm.socialnetwork.feature_post.data.remote.request.CreatePostRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -46,6 +47,11 @@ interface PostApi {
     suspend fun getCommentsForPost(
         @Query("postId") postId: String
     ): List<CommentDto>
+
+    @POST("/api/comment/create")
+    suspend fun createComment(
+        @Body request: CreateCommentRequest
+    ): BasicApiResponse<Unit>
 
     companion object {
         const val BASE_URL = "http://10.0.2.2:8001/"

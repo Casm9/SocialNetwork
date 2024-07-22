@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.core.util.Constants
-import com.casm.socialnetwork.core.data.remote.PostApi
+import com.casm.socialnetwork.feature_post.data.remote.PostApi
 import retrofit2.HttpException
 import java.io.IOException
 

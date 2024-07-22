@@ -1,8 +1,9 @@
 package com.casm.socialnetwork.di
 
-import com.casm.socialnetwork.core.data.remote.PostApi
+import com.casm.socialnetwork.feature_post.data.remote.PostApi
 import com.casm.socialnetwork.feature_post.data.repository.PostRepositoryImpl
 import com.casm.socialnetwork.feature_post.domain.repository.PostRepository
+import com.casm.socialnetwork.feature_post.domain.use_case.CreateCommentUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.CreatePostUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.GetCommentsForPostUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.GetPostDetailsUseCase
@@ -51,7 +52,8 @@ object PostModule {
             getPostsForFollowsUseCase = GetPostsForFollowsUseCase(repository),
             createPostUseCase = CreatePostUseCase(repository),
             getPostDetails = GetPostDetailsUseCase(repository),
-            getCommentsForPost = GetCommentsForPostUseCase(repository)
+            getCommentsForPost = GetCommentsForPostUseCase(repository),
+            createComment = CreateCommentUseCase(repository)
         )
     }
 }

@@ -12,8 +12,9 @@ import com.casm.socialnetwork.core.util.Resource
 import com.casm.socialnetwork.core.util.SimpleResource
 import com.casm.socialnetwork.core.util.UIText
 import com.casm.socialnetwork.feature_auth.data.paging.PostSource
-import com.casm.socialnetwork.core.data.remote.PostApi
+import com.casm.socialnetwork.feature_post.data.remote.PostApi
 import com.casm.socialnetwork.core.domain.models.Comment
+import com.casm.socialnetwork.feature_post.data.remote.request.CreateCommentRequest
 import com.casm.socialnetwork.feature_post.data.remote.request.CreatePostRequest
 import com.casm.socialnetwork.feature_post.domain.repository.PostRepository
 import com.google.gson.Gson
@@ -99,6 +100,32 @@ class PostRepositoryImpl(
                 it.toComment()
             }
             Resource.Success(comments)
+        } catch (e: IOException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_couldnt_reach_server)
+            )
+        } catch (e: HttpException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_someting_went_wrong)
+            )
+        }
+    }
+
+    override suspend fun createComment(postId: String, comment: String): SimpleResource {
+        return try {
+            val response = api.createComment(
+                CreateCommentRequest(
+                    comment = comment,
+                    postId = postId
+                )
+            )
+            if (response.successful) {
+                Resource.Success(response.data)
+            } else {
+                response.message?.let { msg ->
+                    Resource.Error(UIText.DynamicString(msg))
+                } ?: Resource.Error(UIText.StringResource(R.string.error_unknown))
+            }
         } catch (e: IOException) {
             Resource.Error(
                 uiText = UIText.StringResource(R.string.error_couldnt_reach_server)

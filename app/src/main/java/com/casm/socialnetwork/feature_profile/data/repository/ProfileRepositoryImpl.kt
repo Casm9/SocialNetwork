@@ -6,7 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.casm.socialnetwork.R
-import com.casm.socialnetwork.core.data.remote.PostApi
+import com.casm.socialnetwork.feature_post.data.remote.PostApi
 import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.core.domain.models.UserItem
 import com.casm.socialnetwork.core.util.Constants

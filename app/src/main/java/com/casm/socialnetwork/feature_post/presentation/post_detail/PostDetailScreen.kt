@@ -2,7 +2,6 @@ package com.casm.socialnetwork.feature_post.presentation.post_detail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,49 +12,67 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Card
-import androidx.compose.material.IconButton
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.casm.socialnetwork.R
-import com.casm.socialnetwork.core.domain.models.Comment
-import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.core.presentation.components.ActionRow
+import com.casm.socialnetwork.core.presentation.components.StandardTextField
 import com.casm.socialnetwork.core.presentation.components.StandardToolBar
 import com.casm.socialnetwork.core.presentation.ui.theme.MediumGray
 import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeMedium
-import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeSmall
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceLarge
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
 import com.casm.socialnetwork.core.presentation.ui.theme.TextWhite
+import com.casm.socialnetwork.core.presentation.util.UiEvent
+import com.casm.socialnetwork.core.presentation.util.asString
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun PostDetailScreen(
+    scaffoldState: ScaffoldState,
     onNavigateUp: () -> Unit = {},
     viewModel: PostDetailViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
+    val commentTextFieldState = viewModel.commentTextFieldState.value
+
+    val context = LocalContext.current
+    
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when(event) {
+                is UiEvent.ShowSnackbar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.uiText.asString(context)
+                    )
+                }
+                else -> {}
+            }
+        }
+    }
+    
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -72,7 +89,7 @@ fun PostDetailScreen(
         )
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f)
                 .background(MaterialTheme.colorScheme.surface)
         ) {
             item {
@@ -171,97 +188,44 @@ fun PostDetailScreen(
                 )
             }
         }
-    }
-
-
-}
-
-@Composable
-fun Comment(
-    modifier: Modifier = Modifier,
-    comment: Comment,
-    onLikedClick: (Boolean) -> Unit = {}
-) {
-    Card(
-        modifier = modifier,
-        elevation = 5.dp,
-        shape = MaterialTheme.shapes.medium,
-        backgroundColor = MaterialTheme.colorScheme.onSurface,
-    ) {
-        Column(
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(SpaceMedium)
+                .background(MaterialTheme.colorScheme.surface)
+                .fillMaxWidth()
+                .padding(SpaceLarge),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = rememberImagePainter(
-                            data = comment.profilePictureUrl,
-                            builder = {
-                                crossfade(true)
-                            }
-                        ),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .size(ProfilePictureSizeSmall)
-                    )
-                    Spacer(modifier = Modifier.width(SpaceSmall))
-                    Text(
-                        text = comment.username,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
-                Text(
-                    text = comment.formattedTime,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            Spacer(modifier = Modifier.height(SpaceSmall))
-            Row(
+            StandardTextField(
+                text = commentTextFieldState.text,
+                onValueChange = {
+                    viewModel.onEvent(PostDetailEvent.EnteredComment(it))
+                },
+                containerColor = MaterialTheme.colorScheme.background,
                 modifier = Modifier
-                    .fillMaxWidth(),
-            ) {
-                Text(
-                    text = comment.comment,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(9f)
+                    .weight(1f),
+                hint = stringResource(id = R.string.enter_a_comment)
+            )
+            if (viewModel.commentState.value.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .size(24.dp),
+                    strokeWidth = 2.dp
                 )
-                Spacer(modifier = Modifier.width(SpaceSmall))
+            } else {
                 IconButton(
-                    onClick = {
-                        onLikedClick(comment.isLiked)
-                    },
-                    modifier = Modifier.weight(1f)
+                    onClick = { viewModel.onEvent(PostDetailEvent.Comment) },
+                    enabled = commentTextFieldState.error == null
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Favorite,
-                        tint = if (comment.isLiked) {
+                        imageVector = Icons.AutoMirrored.Default.Send,
+                        tint = if(commentTextFieldState.error == null) {
                             MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.onBackground
-                        },
-                        contentDescription = if (comment.isLiked) {
-                            stringResource(id = R.string.unlike)
-                        } else stringResource(id = R.string.like)
+                        } else MaterialTheme.colorScheme.background,
+                        contentDescription = stringResource(id = R.string.send_comment)
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(SpaceSmall))
-            Text(
-                text = stringResource(id = R.string.liked_by_x_people, comment.likeCount),
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.bodyMedium
-            )
         }
     }
 }
-
