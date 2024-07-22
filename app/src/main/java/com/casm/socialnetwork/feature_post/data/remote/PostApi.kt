@@ -6,9 +6,11 @@ import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.feature_post.data.remote.dto.CommentDto
 import com.casm.socialnetwork.feature_post.data.remote.request.CreateCommentRequest
 import com.casm.socialnetwork.feature_post.data.remote.request.CreatePostRequest
+import com.casm.socialnetwork.feature_post.data.remote.request.LikeUpdateRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -51,6 +53,17 @@ interface PostApi {
     @POST("/api/comment/create")
     suspend fun createComment(
         @Body request: CreateCommentRequest
+    ): BasicApiResponse<Unit>
+
+    @POST("/api/like")
+    suspend fun likeParent(
+        @Body request: LikeUpdateRequest
+    ): BasicApiResponse<Unit>
+
+    @DELETE("/api/unlike")
+    suspend fun unlikeParent(
+        @Query("parentId") parentId: String,
+        @Query("parentType") parentType: Int
     ): BasicApiResponse<Unit>
 
     companion object {

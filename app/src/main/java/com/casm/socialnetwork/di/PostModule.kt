@@ -9,6 +9,7 @@ import com.casm.socialnetwork.feature_post.domain.use_case.GetCommentsForPostUse
 import com.casm.socialnetwork.feature_post.domain.use_case.GetPostDetailsUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.GetPostsForFollowsUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.PostUseCases
+import com.casm.socialnetwork.feature_post.domain.use_case.ToggleLikeForParentUseCase
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -53,7 +54,8 @@ object PostModule {
             createPostUseCase = CreatePostUseCase(repository),
             getPostDetails = GetPostDetailsUseCase(repository),
             getCommentsForPost = GetCommentsForPostUseCase(repository),
-            createComment = CreateCommentUseCase(repository)
+            createComment = CreateCommentUseCase(repository),
+            toggleLikeForParent = ToggleLikeForParentUseCase(repository)
         )
     }
 }

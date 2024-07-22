@@ -176,12 +176,14 @@ fun ProfileScreen(
                 Post(
                     post = Post(
                         id = post?.id ?: "",
+                        userId = post?.userId ?: "",
                         username = post?.username ?: "",
                         imageUrl = post?.imageUrl ?: "",
                         profilePictureUrl = post?.profilePictureUrl ?: "",
                         description = post?.description ?: "",
                         likeCount = post?.likeCount ?: 0,
                         commentCount = post?.commentCount ?: 0,
+                        isLiked = post?.isLiked ?: false
                     ),
                     showProfileImage = false,
                     onPostClick = {

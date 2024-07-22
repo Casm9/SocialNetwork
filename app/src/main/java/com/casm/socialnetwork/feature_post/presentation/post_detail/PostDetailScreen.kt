@@ -59,20 +59,21 @@ fun PostDetailScreen(
     val commentTextFieldState = viewModel.commentTextFieldState.value
 
     val context = LocalContext.current
-    
+
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
-            when(event) {
+            when (event) {
                 is UiEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.uiText.asString(context)
                     )
                 }
+
                 else -> {}
             }
         }
     }
-    
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -127,12 +128,15 @@ fun PostDetailScreen(
                                         .padding(SpaceLarge)
                                 ) {
                                     ActionRow(
-                                        username = "Casm",
+                                        username = state.post.username,
                                         modifier = Modifier.fillMaxWidth(),
-                                        onLikeClick = {},
+                                        onLikeClick = {
+                                            viewModel.onEvent(PostDetailEvent.LikePost)
+                                        },
                                         onCommentClick = {},
                                         onShareClick = {},
-                                        onUsernameClick = {}
+                                        onUsernameClick = {},
+                                        isLiked = state.post.isLiked
                                     )
                                     Spacer(modifier = Modifier.height(SpaceSmall))
                                     Text(
@@ -184,7 +188,10 @@ fun PostDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = SpaceLarge, vertical = SpaceSmall),
-                    comment = comment
+                    comment = comment,
+                    onLikedClick = {
+                        viewModel.onEvent(PostDetailEvent.LikeComment(comment.id))
+                    }
                 )
             }
         }
@@ -219,7 +226,7 @@ fun PostDetailScreen(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.Send,
-                        tint = if(commentTextFieldState.error == null) {
+                        tint = if (commentTextFieldState.error == null) {
                             MaterialTheme.colorScheme.primary
                         } else MaterialTheme.colorScheme.background,
                         contentDescription = stringResource(id = R.string.send_comment)
