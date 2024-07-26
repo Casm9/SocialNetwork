@@ -1,15 +1,13 @@
 package com.casm.socialnetwork.feature_profile.domain.use_case
 
 import android.net.Uri
-import android.util.Patterns
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.util.Resource
 import com.casm.socialnetwork.core.util.SimpleResource
 import com.casm.socialnetwork.core.util.UIText
 import com.casm.socialnetwork.feature_profile.domain.model.UpdateProfileData
-import com.casm.socialnetwork.feature_profile.domain.repository.ProfileRepository
+import com.casm.socialnetwork.core.domain.repository.ProfileRepository
 import com.casm.socialnetwork.feature_profile.domain.util.ProfileConstants
-import java.util.regex.Pattern
 
 class UpdateProfileUseCase(
     private val repository: ProfileRepository

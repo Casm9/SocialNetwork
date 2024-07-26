@@ -1,6 +1,9 @@
 package com.casm.socialnetwork.feature_post.presentation.main_feed
 
+import com.casm.socialnetwork.core.domain.models.Post
+
 sealed class MainFeedEvent {
-    data object LoadMorePosts: MainFeedEvent()
-    data object LoadedPage: MainFeedEvent()
+    data class DeletePost(val post: Post): MainFeedEvent()
+    data class LikedPost(val postId: String): MainFeedEvent()
+
 }

@@ -2,7 +2,7 @@ package com.casm.socialnetwork.feature_profile.domain.use_case
 
 import com.casm.socialnetwork.core.domain.models.UserItem
 import com.casm.socialnetwork.core.util.Resource
-import com.casm.socialnetwork.feature_profile.domain.repository.ProfileRepository
+import com.casm.socialnetwork.core.domain.repository.ProfileRepository
 
 class SearchUserUseCase(
     private val repository: ProfileRepository

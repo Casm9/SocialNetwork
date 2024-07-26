@@ -1,6 +1,7 @@
 package com.casm.socialnetwork.feature_post.data.remote
 
 import com.casm.socialnetwork.core.data.dto.response.BasicApiResponse
+import com.casm.socialnetwork.core.data.dto.response.UserItemDto
 import com.casm.socialnetwork.core.domain.models.Comment
 import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.feature_post.data.remote.dto.CommentDto
@@ -65,6 +66,11 @@ interface PostApi {
         @Query("parentId") parentId: String,
         @Query("parentType") parentType: Int
     ): BasicApiResponse<Unit>
+
+    @GET("/api/like/parent")
+    suspend fun getLikesForParent(
+        @Query("parentId") parentId: String
+    ): List<UserItemDto>
 
     companion object {
         const val BASE_URL = "http://10.0.2.2:8001/"

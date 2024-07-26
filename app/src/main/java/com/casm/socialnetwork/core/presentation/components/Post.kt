@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -29,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -90,7 +92,11 @@ fun Post(
                         crossfade(true)
                     }
                 ),
-                contentDescription = "Post image"
+                contentDescription = "Post image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9f)
             )
             Column(
                 modifier = Modifier
@@ -106,24 +112,36 @@ fun Post(
                     onUsernameClick = onUsernameClick
                 )
                 Spacer(modifier = Modifier.height(SpaceSmall))
-                Text(
-                    text = buildAnnotatedString {
-                        append(post.description)
-                        withStyle(SpanStyle(
-                            color = HintGray
-                        )) {
-                            append(
-                                LocalContext.current.getString(
-                                    R.string.read_more
+                if (post.description.length > Constants.DEFAULT_PAGE_SIZE) {
+                    Text(
+                        text = buildAnnotatedString {
+                            append(post.description)
+                            withStyle(
+                                SpanStyle(
+                                    color = HintGray
                                 )
-                            )
-                        }
-                    },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextWhite,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = Constants.MAX_POST_DESCRIPTION_LINES
-                )
+                            ) {
+                                append(
+                                    "  " + LocalContext.current.getString(
+                                        R.string.read_more
+                                    )
+                                )
+                            }
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextWhite,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = Constants.MAX_POST_DESCRIPTION_LINES
+                    )
+                } else {
+                    Text(
+                        text = post.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextWhite,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = Constants.MAX_POST_DESCRIPTION_LINES
+                    )
+                }
                 Spacer(modifier = Modifier.height(SpaceMedium))
 
                 Row(
@@ -160,7 +178,7 @@ fun Post(
                         crossfade(true)
                     }
                 ),
-                contentDescription = "Profile picture",
+                contentDescription = stringResource(id = R.string.profile_image),
                 modifier = Modifier
                     .size(ProfilePictureSizeMedium)
                     .clip(CircleShape)
@@ -181,14 +199,14 @@ fun EngagementButtons(
     onShareClick: () -> Unit = {},
 
     ) {
-   Row(
-       horizontalArrangement = Arrangement.SpaceAround,
-       verticalAlignment = Alignment.CenterVertically,
-       modifier = modifier
-   ) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
         IconButton(
             onClick = {
-            onLikeClick()
+                onLikeClick()
             },
             modifier = Modifier
                 .size(iconSize)
@@ -196,44 +214,44 @@ fun EngagementButtons(
             Icon(
                 imageVector = Icons.Filled.Favorite,
                 tint = if (isLiked) {
-                   MaterialTheme.colorScheme.primary
-                  } else {
-                   TextWhite
-                  },
-                contentDescription = if(isLiked) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    TextWhite
+                },
+                contentDescription = if (isLiked) {
                     stringResource(id = R.string.unlike)
                 } else {
                     stringResource(id = R.string.like)
                 }
             )
         }
-       Spacer(modifier = Modifier.width(SpaceMedium))
-       IconButton(
-           onClick = {
-           onCommentClick()
-         },
-           modifier = Modifier
-               .size(iconSize)
-       ) {
-           Icon(
-               imageVector = Icons.AutoMirrored.Filled.Comment,
-               contentDescription = stringResource(id = R.string.comment)
-           )
-       }
-       Spacer(modifier = Modifier.width(SpaceMedium))
-       IconButton(
-           onClick = {
-           onShareClick()
+        Spacer(modifier = Modifier.width(SpaceMedium))
+        IconButton(
+            onClick = {
+                onCommentClick()
             },
-           modifier = Modifier
-               .size(iconSize)
-       ) {
-           Icon(
-               imageVector = Icons.Filled.Share,
-               contentDescription = stringResource(id = R.string.share)
-           )
-       }
-   }
+            modifier = Modifier
+                .size(iconSize)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.Comment,
+                contentDescription = stringResource(id = R.string.comment)
+            )
+        }
+        Spacer(modifier = Modifier.width(SpaceMedium))
+        IconButton(
+            onClick = {
+                onShareClick()
+            },
+            modifier = Modifier
+                .size(iconSize)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Share,
+                contentDescription = stringResource(id = R.string.share)
+            )
+        }
+    }
 }
 
 @Composable
@@ -268,5 +286,5 @@ fun ActionRow(
             onShareClick = onShareClick
         )
     }
-    
+
 }

@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val profileUseCases: ProfileUseCases
-): ViewModel() {
+) : ViewModel() {
 
     private val _searchFieldState = mutableStateOf(StandardTextFieldState())
     val searchFieldState: State<StandardTextFieldState> = _searchFieldState
@@ -35,10 +35,11 @@ class SearchViewModel @Inject constructor(
     private var searchJob: Job? = null
 
     fun onEvent(event: SearchEvent) {
-        when(event) {
+        when (event) {
             is SearchEvent.Query -> {
                 searchUser(event.query)
             }
+
             is SearchEvent.ToggleFollowState -> {
                 toggleFollowStateForUser(event.userId)
             }
@@ -63,7 +64,7 @@ class SearchViewModel @Inject constructor(
                 userId = userId,
                 isFollowing = isFollowing
             )
-            when(result) {
+            when (result) {
                 is Resource.Success -> Unit
                 is Resource.Error -> {
                     _searchState.value = searchState.value.copy(
@@ -74,9 +75,11 @@ class SearchViewModel @Inject constructor(
                         }
                     )
 
-                    _eventFlow.emit(UiEvent.ShowSnackbar(
-                        uiText = result.uiText ?: UIText.unknownError()
-                    ))
+                    _eventFlow.emit(
+                        UiEvent.ShowSnackbar(
+                            uiText = result.uiText ?: UIText.unknownError()
+                        )
+                    )
                 }
             }
         }
@@ -93,13 +96,14 @@ class SearchViewModel @Inject constructor(
                 isLoading = true
             )
             val result = profileUseCases.searchUser(query)
-            when(result) {
+            when (result) {
                 is Resource.Success -> {
                     _searchState.value = searchState.value.copy(
                         userItems = result.data ?: emptyList(),
                         isLoading = false
                     )
                 }
+
                 is Resource.Error -> {
                     _searchFieldState.value = searchFieldState.value.copy(
                         error = SearchError(

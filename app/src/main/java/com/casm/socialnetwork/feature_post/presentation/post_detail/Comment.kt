@@ -1,6 +1,7 @@
 package com.casm.socialnetwork.feature_post.presentation.post_detail
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,7 +38,8 @@ import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
 fun Comment(
     modifier: Modifier = Modifier,
     comment: Comment,
-    onLikedClick: (Boolean) -> Unit = {}
+    onLikedClick: (Boolean) -> Unit = {},
+    onLikedByClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier,
@@ -64,7 +66,7 @@ fun Comment(
                                 crossfade(true)
                             }
                         ),
-                        contentDescription = null,
+                        contentDescription = stringResource(id = R.string.profile_image),
                         modifier = Modifier
                             .clip(CircleShape)
                             .size(ProfilePictureSizeSmall)
@@ -101,6 +103,9 @@ fun Comment(
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.fillMaxWidth()
+                            .clickable {
+                                onLikedByClick()
+                            }
                     )
                 }
                 Spacer(modifier = Modifier.width(SpaceSmall))

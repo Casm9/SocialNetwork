@@ -2,8 +2,9 @@ package com.casm.socialnetwork.di
 
 import com.casm.socialnetwork.feature_post.data.remote.PostApi
 import com.casm.socialnetwork.feature_profile.data.remote.ProfileApi
-import com.casm.socialnetwork.feature_profile.data.repository.ProfileRepositoryImpl
-import com.casm.socialnetwork.feature_profile.domain.repository.ProfileRepository
+import com.casm.socialnetwork.core.data.repository.ProfileRepositoryImpl
+import com.casm.socialnetwork.core.domain.repository.ProfileRepository
+import com.casm.socialnetwork.core.domain.use_case.GetOwnUserIdUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetPostsForProfileUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetProfileUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetSkillsUseCase
@@ -55,5 +56,11 @@ object ProfileModule {
             searchUser = SearchUserUseCase(repository),
             toggleFollowStateForUser = ToggleFollowStateForUserUseCase(repository)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideToggleFollowForUserUseCase(repository: ProfileRepository): ToggleFollowStateForUserUseCase {
+        return ToggleFollowStateForUserUseCase(repository)
     }
 }

@@ -14,6 +14,7 @@ import com.casm.socialnetwork.core.util.UIText
 import com.casm.socialnetwork.feature_auth.data.paging.PostSource
 import com.casm.socialnetwork.feature_post.data.remote.PostApi
 import com.casm.socialnetwork.core.domain.models.Comment
+import com.casm.socialnetwork.core.domain.models.UserItem
 import com.casm.socialnetwork.feature_post.data.remote.request.CreateCommentRequest
 import com.casm.socialnetwork.feature_post.data.remote.request.CreatePostRequest
 import com.casm.socialnetwork.feature_post.data.remote.request.LikeUpdateRequest
@@ -182,6 +183,42 @@ class PostRepositoryImpl(
                 uiText = UIText.StringResource(R.string.error_couldnt_reach_server)
             )
         } catch (e: HttpException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_someting_went_wrong)
+            )
+        }
+    }
+
+    override suspend fun getLikesForParent(parentId: String): Resource<List<UserItem>> {
+        return try {
+            val response = api.getLikesForParent(
+                parentId = parentId
+            )
+            Resource.Success(response.map { it.toUserItem() })
+
+        } catch (e: IOException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_couldnt_reach_server)
+            )
+        } catch (e: HttpException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_someting_went_wrong)
+            )
+        }
+    }
+
+    override suspend fun getPostsForFollows(page: Int, pageSize: Int): Resource<List<Post>> {
+        return try {
+            val posts = api.getPostsForFollows(
+                page = page,
+                pageSize = pageSize
+            )
+            Resource.Success(data = posts)
+        } catch(e: IOException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_couldnt_reach_server)
+            )
+        } catch(e: HttpException) {
             Resource.Error(
                 uiText = UIText.StringResource(R.string.error_someting_went_wrong)
             )

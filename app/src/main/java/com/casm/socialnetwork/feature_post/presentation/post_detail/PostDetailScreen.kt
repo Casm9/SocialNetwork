@@ -2,10 +2,12 @@ package com.casm.socialnetwork.feature_post.presentation.post_detail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,12 +50,14 @@ import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
 import com.casm.socialnetwork.core.presentation.ui.theme.TextWhite
 import com.casm.socialnetwork.core.presentation.util.UiEvent
 import com.casm.socialnetwork.core.presentation.util.asString
+import com.casm.socialnetwork.core.util.Screen
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun PostDetailScreen(
     scaffoldState: ScaffoldState,
     onNavigateUp: () -> Unit = {},
+    onNavigate: (String) -> Unit = {},
     viewModel: PostDetailViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
@@ -120,7 +125,8 @@ fun PostDetailScreen(
                                         }
                                     ),
                                     contentDescription = stringResource(id = R.string.post_image),
-                                    modifier = Modifier.fillMaxWidth()
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxWidth().aspectRatio(16f/9f)
                                 )
                                 Column(
                                     modifier = Modifier
@@ -152,6 +158,9 @@ fun PostDetailScreen(
                                         ),
                                         fontWeight = FontWeight.Bold,
                                         style = MaterialTheme.typography.bodyMedium,
+                                        modifier = Modifier.clickable {
+                                            onNavigate(Screen.PersonListScreen.route + "/${post.id}")
+                                        }
                                     )
                                 }
                             }
@@ -164,7 +173,7 @@ fun PostDetailScreen(
                                     crossfade(true)
                                 }
                             ),
-                            contentDescription = "Profile picture",
+                            contentDescription = stringResource(id = R.string.profile_image),
                             modifier = Modifier
                                 .size(ProfilePictureSizeMedium)
                                 .clip(CircleShape)
@@ -191,6 +200,9 @@ fun PostDetailScreen(
                     comment = comment,
                     onLikedClick = {
                         viewModel.onEvent(PostDetailEvent.LikeComment(comment.id))
+                    },
+                    onLikedByClick = {
+                        onNavigate(Screen.PersonListScreen.route + "/${comment.id}")
                     }
                 )
             }

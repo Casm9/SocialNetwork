@@ -56,6 +56,7 @@ import com.casm.socialnetwork.core.presentation.util.UiEvent
 import com.casm.socialnetwork.core.presentation.util.asString
 import com.casm.socialnetwork.core.util.Screen
 import com.casm.socialnetwork.core.util.toPx
+import com.casm.socialnetwork.feature_post.presentation.person_list.PostEvent
 import com.casm.socialnetwork.feature_profile.presentation.edit_profile.EditProfileEvent
 import kotlinx.coroutines.flow.collectLatest
 
@@ -68,8 +69,7 @@ fun ProfileScreen(
     profilePictureSize: Dp = ProfilePictureSizeLarge,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
-    val posts = viewModel.posts.collectAsLazyPagingItems()
-
+    val pagingState = viewModel.pagingState.value
     val lazyListState = rememberLazyListState()
     val toolbarState = viewModel.toolbarState.value
 
@@ -116,6 +116,7 @@ fun ProfileScreen(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
+
         viewModel.getProfile(userId)
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -158,7 +159,7 @@ fun ProfileScreen(
                             description = profile.bio,
                             followerCount = profile.followerCount,
                             followingCount = profile.followingCount,
-                            postCount = profile.postCount
+                            postCount = profile.postCount,
                         ),
                         isFollowing = profile.isFollowing,
                         isOwnProfile = profile.isOwnProfile,
@@ -168,28 +169,25 @@ fun ProfileScreen(
                     )
                 }
             }
-            items(posts) { post ->
-                Spacer(
-                    modifier = Modifier
-                        .height(SpaceMedium)
-                )
+            items(pagingState.items.size) { i ->
+                val post = pagingState.items[i]
+                if (i >= pagingState.items.size - 1 && !pagingState.endReached && !pagingState.isLoading) {
+                    viewModel.loadNextPosts()
+                }
+
                 Post(
-                    post = Post(
-                        id = post?.id ?: "",
-                        userId = post?.userId ?: "",
-                        username = post?.username ?: "",
-                        imageUrl = post?.imageUrl ?: "",
-                        profilePictureUrl = post?.profilePictureUrl ?: "",
-                        description = post?.description ?: "",
-                        likeCount = post?.likeCount ?: 0,
-                        commentCount = post?.commentCount ?: 0,
-                        isLiked = post?.isLiked ?: false
-                    ),
+                    post = post,
                     showProfileImage = false,
                     onPostClick = {
-                        onNavigate(Screen.PostDetailScreen.route + "/${post?.id}")
+                        onNavigate(Screen.PostDetailScreen.route + "/${post.id}")
                     },
+                    onLikeClick = {
+                        viewModel.onEvent(ProfileEvent.LikePost(post.id))
+                    }
                 )
+            }
+            item {
+                Spacer(modifier = Modifier.height(90.dp))
             }
         }
         Column(

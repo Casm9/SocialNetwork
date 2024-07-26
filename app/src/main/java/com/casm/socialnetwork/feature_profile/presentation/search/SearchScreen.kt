@@ -28,13 +28,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.User
+import com.casm.socialnetwork.core.domain.models.UserItem
 import com.casm.socialnetwork.core.presentation.components.StandardTextField
 import com.casm.socialnetwork.core.presentation.components.StandardToolBar
 import com.casm.socialnetwork.core.presentation.components.UserProfileItem
 import com.casm.socialnetwork.core.presentation.ui.theme.IconSizeMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceLarge
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
-import com.casm.socialnetwork.core.domain.states.StandardTextFieldState
 import com.casm.socialnetwork.core.util.Screen
 
 @Composable
@@ -85,15 +85,7 @@ fun SearchScreen(
                 ) {
                     items(state.userItems) { user ->
                         UserProfileItem(
-                            user = User(
-                                userId = user.userId,
-                                profilePictureUrl = user.profilePictureUrl,
-                                username = user.username,
-                                description = user.bio,
-                                followerCount = 0,
-                                followingCount = 0,
-                                postCount = 0
-                            ),
+                            user = user,
                             actionIcon = {
                                 IconButton(
                                     onClick = {

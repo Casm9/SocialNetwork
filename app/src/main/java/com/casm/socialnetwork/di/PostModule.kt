@@ -6,10 +6,11 @@ import com.casm.socialnetwork.feature_post.domain.repository.PostRepository
 import com.casm.socialnetwork.feature_post.domain.use_case.CreateCommentUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.CreatePostUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.GetCommentsForPostUseCase
+import com.casm.socialnetwork.feature_post.domain.use_case.GetLikesForParentUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.GetPostDetailsUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.GetPostsForFollowsUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.PostUseCases
-import com.casm.socialnetwork.feature_post.domain.use_case.ToggleLikeForParentUseCase
+import com.casm.socialnetwork.core.domain.use_case.ToggleLikeForParentUseCase
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -50,12 +51,13 @@ object PostModule {
     @Singleton
     fun providePostUseCases(repository: PostRepository): PostUseCases {
         return PostUseCases(
-            getPostsForFollowsUseCase = GetPostsForFollowsUseCase(repository),
+            getPostsForFollows = GetPostsForFollowsUseCase(repository),
             createPostUseCase = CreatePostUseCase(repository),
             getPostDetails = GetPostDetailsUseCase(repository),
             getCommentsForPost = GetCommentsForPostUseCase(repository),
             createComment = CreateCommentUseCase(repository),
-            toggleLikeForParent = ToggleLikeForParentUseCase(repository)
+            toggleLikeForParent = ToggleLikeForParentUseCase(repository),
+            getLikesForParent = GetLikesForParentUseCase(repository),
         )
     }
 }

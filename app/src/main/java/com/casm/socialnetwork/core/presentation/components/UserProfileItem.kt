@@ -24,12 +24,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.User
+import com.casm.socialnetwork.core.domain.models.UserItem
 import com.casm.socialnetwork.core.presentation.ui.theme.IconSizeMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeSmall
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
@@ -38,10 +40,11 @@ import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun UserProfileItem(
-    user: User,
+    user: UserItem,
     actionIcon: @Composable () -> Unit = {},
     onItemClick: () -> Unit = {},
-    onActionItemClick: () -> Unit = {}
+    onActionItemClick: () -> Unit = {},
+    ownUserId: String = ""
 ) {
     Card(
         modifier = Modifier,
@@ -65,17 +68,16 @@ fun UserProfileItem(
                         crossfade(true)
                     }
                 ),
-                contentDescription = null,
+                contentDescription = stringResource(id = R.string.profile_image),
                 modifier = Modifier
-                    .size(ProfilePictureSizeSmall)
                     .clip(CircleShape)
-
+                    .size(ProfilePictureSizeSmall)
             )
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth(0.8f)
-                    .padding(horizontal = SpaceSmall)
+                    .weight(1f)
             ) {
                 Text(
                     text = user.username,
@@ -85,19 +87,20 @@ fun UserProfileItem(
                 )
                 Spacer(modifier = Modifier.height(SpaceSmall))
                 Text(
-                    text = user.description,
+                    text = user.bio,
                     style = MaterialTheme.typography.bodyMedium,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2
                 )
             }
-            IconButton(
-                onClick = onActionItemClick,
-                modifier = Modifier.size(IconSizeMedium)
-            ) {
-                actionIcon()
+            if(user.userId != ownUserId) {
+                IconButton(
+                    onClick = onActionItemClick,
+                    modifier = Modifier.size(IconSizeMedium)
+                ) {
+                    actionIcon()
+                }
             }
-
         }
     }
 }

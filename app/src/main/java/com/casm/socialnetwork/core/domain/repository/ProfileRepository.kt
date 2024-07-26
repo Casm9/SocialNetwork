@@ -1,10 +1,11 @@
-package com.casm.socialnetwork.feature_profile.domain.repository
+package com.casm.socialnetwork.core.domain.repository
 
 import android.net.Uri
 import androidx.compose.foundation.pager.PageSize
 import androidx.paging.PagingData
 import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.core.domain.models.UserItem
+import com.casm.socialnetwork.core.util.Constants
 import com.casm.socialnetwork.core.util.Resource
 import com.casm.socialnetwork.core.util.SimpleResource
 import com.casm.socialnetwork.feature_profile.domain.model.Profile
@@ -15,7 +16,11 @@ import retrofit2.http.Query
 
 interface ProfileRepository {
 
-    fun getPostsPaged(userId: String): Flow<PagingData<Post>>
+    suspend fun getPostsPaged(
+        page: Int = 0,
+        pageSize: Int = Constants.DEFAULT_PAGE_SIZE,
+        userId: String
+    ): Resource<List<Post>>
 
     suspend fun getProfile(userId: String): Resource<Profile>
 

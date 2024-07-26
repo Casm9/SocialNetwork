@@ -72,6 +72,7 @@ fun ActivityScreen(
                             ),
                             onNavigate = onNavigate
                         )
+                        Spacer(modifier = Modifier.height(SpaceMedium))
                     }
                 }
             }
