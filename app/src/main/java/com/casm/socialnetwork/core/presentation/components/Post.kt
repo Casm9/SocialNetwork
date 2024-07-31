@@ -29,10 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -42,7 +40,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.core.presentation.ui.theme.HintGray
@@ -58,6 +57,7 @@ import com.casm.socialnetwork.core.util.Constants
 fun Post(
     post: Post,
     modifier: Modifier = Modifier,
+    imageLoader: ImageLoader,
     showProfileImage: Boolean = true,
     onPostClick: () -> Unit = {},
     onLikeClick: () -> Unit = {},
@@ -86,13 +86,11 @@ fun Post(
                 }
         ) {
             Image(
-                painter = rememberImagePainter(
-                    data = post.imageUrl,
-                    builder = {
-                        crossfade(true)
-                    }
+                painter = rememberAsyncImagePainter(
+                    model = post.imageUrl,
+                    imageLoader = imageLoader
                 ),
-                contentDescription = "Post image",
+                contentDescription = stringResource(id = R.string.post_image),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -104,12 +102,13 @@ fun Post(
                     .padding(SpaceMedium)
             ) {
                 ActionRow(
-                    username = "Casm",
+                    username = post.username,
                     modifier = Modifier.fillMaxWidth(),
                     onLikeClick = onLikeClick,
                     onCommentClick = onCommentClick,
                     onShareClick = onShareClick,
-                    onUsernameClick = onUsernameClick
+                    onUsernameClick = onUsernameClick,
+                    isLiked = post.isLiked
                 )
                 Spacer(modifier = Modifier.height(SpaceSmall))
                 if (post.description.length > Constants.DEFAULT_PAGE_SIZE) {
@@ -151,7 +150,7 @@ fun Post(
                 ) {
                     Text(
                         text = stringResource(
-                            id = R.string.liked_by_x_people,
+                            id = R.string.x_likes,
                             post.likeCount
                         ),
                         fontWeight = FontWeight.Bold,
@@ -172,11 +171,9 @@ fun Post(
         }
         if (showProfileImage) {
             Image(
-                painter = rememberImagePainter(
-                    data = post.profilePictureUrl,
-                    builder = {
-                        crossfade(true)
-                    }
+                painter = rememberAsyncImagePainter(
+                    model = post.profilePictureUrl,
+                    imageLoader = imageLoader
                 ),
                 contentDescription = stringResource(id = R.string.profile_image),
                 modifier = Modifier
@@ -216,7 +213,7 @@ fun EngagementButtons(
                 tint = if (isLiked) {
                     MaterialTheme.colorScheme.primary
                 } else {
-                    TextWhite
+                    MaterialTheme.colorScheme.onBackground
                 },
                 contentDescription = if (isLiked) {
                     stringResource(id = R.string.unlike)

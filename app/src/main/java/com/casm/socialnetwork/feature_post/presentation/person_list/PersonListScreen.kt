@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.ImageLoader
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.User
 import com.casm.socialnetwork.core.domain.models.UserItem
@@ -44,6 +45,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun PersonListScreen(
     scaffoldState: ScaffoldState,
+    imageLoader: ImageLoader,
     onNavigateUp: () -> Unit = {},
     onNavigate: (String) -> Unit = {},
     viewModel: PersonListViewModel = hiltViewModel()
@@ -91,6 +93,7 @@ fun PersonListScreen(
                 items(state.users) { user ->
                     UserProfileItem(
                         user = user,
+                        imageLoader = imageLoader,
                         actionIcon = {
                             Icon(
                                 imageVector = if (user.isFollowing) {

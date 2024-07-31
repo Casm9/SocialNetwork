@@ -10,7 +10,7 @@ import com.casm.socialnetwork.feature_post.domain.use_case.GetLikesForParentUseC
 import com.casm.socialnetwork.feature_post.domain.use_case.GetPostDetailsUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.GetPostsForFollowsUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.PostUseCases
-import com.casm.socialnetwork.core.domain.use_case.ToggleLikeForParentUseCase
+import com.casm.socialnetwork.feature_post.domain.use_case.ToggleLikeForParentUseCase
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides

@@ -14,7 +14,7 @@ import java.util.UUID
 
 class CropActivityResultContract(
     private val aspectRatioX: Float,
-    private val aspectRatioY: Float,
+    private val aspectRatioY: Float
 ) : ActivityResultContract<Uri, Uri?>() {
     override fun createIntent(context: Context, input: Uri): Intent {
         return UCrop.of(
@@ -31,11 +31,14 @@ class CropActivityResultContract(
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
+        if (intent == null) {
+            return null
+        }
         if (resultCode == RESULT_ERROR) {
-            val error = UCrop.getError(intent!!)
+            val error = UCrop.getError(intent)
             error?.printStackTrace()
         }
-        return UCrop.getOutput(intent ?: return null)
+        return UCrop.getOutput(intent)
 
     }
 }

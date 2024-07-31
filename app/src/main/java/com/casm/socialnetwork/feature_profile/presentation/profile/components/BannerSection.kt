@@ -18,14 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
-import coil.compose.rememberImagePainter
-import coil.decode.SvgDecoder
+import coil.compose.rememberAsyncImagePainter
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
 import com.casm.socialnetwork.core.util.toPx
@@ -34,6 +32,7 @@ import com.casm.socialnetwork.feature_profile.domain.model.Skill
 @Composable
 fun BannerSection(
     modifier: Modifier = Modifier,
+    imageLoader: ImageLoader,
     imageModifier: Modifier = Modifier,
     iconSize: Dp = 35.dp,
     leftIconModifier: Modifier = Modifier,
@@ -52,11 +51,9 @@ fun BannerSection(
 
     ) {
         Image(
-            painter = rememberImagePainter(
-                data = bannerUrl,
-                builder = {
-                    crossfade(true)
-                }
+            painter = rememberAsyncImagePainter(
+                model = bannerUrl,
+                imageLoader = imageLoader
             ),
             contentDescription = stringResource(id = R.string.banner_image),
             contentScale = ContentScale.Crop,
@@ -85,17 +82,9 @@ fun BannerSection(
             topSkills.forEach { skill ->
                 Spacer(modifier = Modifier.width(SpaceSmall))
                 Image(
-                    painter = rememberImagePainter(
-                        data = skill.imageUrl,
-                        imageLoader = ImageLoader.Builder(LocalContext.current)
-                            .components {
-                             add(SvgDecoder.Factory())
-                            }
-                            .build(),
-                        builder = {
-                            crossfade(true)
-
-                        }
+                    painter = rememberAsyncImagePainter(
+                        model = skill.imageUrl,
+                        imageLoader = imageLoader
                     ),
                     contentDescription = null,
                     modifier = Modifier.height(iconSize)

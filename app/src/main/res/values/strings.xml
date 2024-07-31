@@ -17,7 +17,7 @@
     <string name="comment">Comment</string>
     <string name="share">Share</string>
     <string name="read_more">Read more</string>
-    <string name="liked_by_x_people">Liked by %d people</string>
+    <string name="x_likes">%d likes</string>
     <string name="x_comments">%d comments</string>
     <string name="home">Home</string>
     <string name="chat">Chat</string>
@@ -81,4 +81,11 @@
     <string name="enter_a_comment">Enter a comment...</string>
     <string name="comment_posted">Successfully posted the comment</string>
     <string name="successfully_deleted_post">Successfully deleted post.</string>
+    <string name="logo">Logo</string>
+    <string name="logout">Logout</string>
+    <string name="do_you_want_to_logout">Do you want to logout?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="share_intent_text">Hey, i found a great post, check it out.\n%s</string>
+    <string name="error_not_logged_in">Oops! Please login before doing that.</string>
 </resources>

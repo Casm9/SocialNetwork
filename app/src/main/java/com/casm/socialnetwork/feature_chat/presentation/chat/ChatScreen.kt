@@ -10,12 +10,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
+import coil.ImageLoader
 import com.casm.socialnetwork.core.presentation.components.StandardScaffold
 
 @Composable
 fun ChatScreen(
     onNavigate: (String) -> Unit = {},
     onNavigateUp: () -> Unit = {},
+    imageLoader: ImageLoader
 ) {
     Box(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),

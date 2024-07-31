@@ -3,27 +3,33 @@ package com.casm.socialnetwork.feature_profile.presentation.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -38,15 +44,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import coil.decode.SvgDecoder
 import com.casm.socialnetwork.R
-import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.core.domain.models.User
 import com.casm.socialnetwork.core.presentation.components.Post
-import com.casm.socialnetwork.core.presentation.components.StandardToolBar
 import com.casm.socialnetwork.feature_profile.presentation.profile.components.BannerSection
 import com.casm.socialnetwork.feature_profile.presentation.profile.components.ProfileHeaderSection
 import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeLarge
@@ -54,10 +60,9 @@ import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
 import com.casm.socialnetwork.core.presentation.util.UiEvent
 import com.casm.socialnetwork.core.presentation.util.asString
+import com.casm.socialnetwork.core.presentation.util.sendSharePostIntent
 import com.casm.socialnetwork.core.util.Screen
 import com.casm.socialnetwork.core.util.toPx
-import com.casm.socialnetwork.feature_post.presentation.person_list.PostEvent
-import com.casm.socialnetwork.feature_profile.presentation.edit_profile.EditProfileEvent
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -65,7 +70,8 @@ fun ProfileScreen(
     scaffoldState: ScaffoldState,
     userId: String? = null,
     onNavigate: (String) -> Unit = {},
-    onNavigateUp: () -> Unit = {},
+    onLogout: () -> Unit = {},
+    imageLoader: ImageLoader,
     profilePictureSize: Dp = ProfilePictureSizeLarge,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
@@ -163,6 +169,9 @@ fun ProfileScreen(
                         ),
                         isFollowing = profile.isFollowing,
                         isOwnProfile = profile.isOwnProfile,
+                        onLogoutClick = {
+                            viewModel.onEvent(ProfileEvent.ShowLogoutDialog)
+                        },
                         onEditClick = {
                             onNavigate(Screen.EditProfileScreen.route + "/${profile.userId}")
                         }
@@ -174,15 +183,21 @@ fun ProfileScreen(
                 if (i >= pagingState.items.size - 1 && !pagingState.endReached && !pagingState.isLoading) {
                     viewModel.loadNextPosts()
                 }
-
                 Post(
                     post = post,
+                    imageLoader = imageLoader,
                     showProfileImage = false,
                     onPostClick = {
                         onNavigate(Screen.PostDetailScreen.route + "/${post.id}")
                     },
+                    onCommentClick = {
+                        onNavigate(Screen.PostDetailScreen.route + "/${post.id}?shouldShowKeyboard=true")
+                    },
                     onLikeClick = {
                         viewModel.onEvent(ProfileEvent.LikePost(post.id))
+                    },
+                    onShareClick = {
+                        context.sendSharePostIntent(post.id)
                     }
                 )
             }
@@ -203,6 +218,7 @@ fun ProfileScreen(
                                 maximumValue = bannerHeight
                             )
                         ),
+                    imageLoader = imageLoader,
                     leftIconModifier = Modifier
                         .graphicsLayer {
                             translationY = (1f - toolbarState.expandedRatio) *
@@ -224,11 +240,9 @@ fun ProfileScreen(
                     bannerUrl = profile.bannerUrl
                 )
                 Image(
-                    painter = rememberImagePainter(
-                        data = profile.profilePictureUrl,
-                        builder = {
-                            crossfade(true)
-                        }
+                    painter = rememberAsyncImagePainter(
+                        model = profile.profilePictureUrl,
+                        imageLoader = imageLoader
                     ),
                     contentDescription = stringResource(id = R.string.profile_image),
                     modifier = Modifier
@@ -253,8 +267,47 @@ fun ProfileScreen(
                         )
                 )
             }
-
+        }
+        if (state.isLogoutDialogVisible) {
+            Dialog(onDismissRequest = {
+                viewModel.onEvent(ProfileEvent.DismissLogoutDialog)
+            }) {
+                Column(
+                    modifier = Modifier
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                        .padding(SpaceMedium)
+                ) {
+                    Text(text = stringResource(id = R.string.do_you_want_to_logout))
+                    Spacer(modifier = Modifier.height(SpaceMedium))
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier.align(End)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.no).uppercase(),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.clickable {
+                                viewModel.onEvent(ProfileEvent.DismissLogoutDialog)
+                            }
+                        )
+                        Spacer(modifier = Modifier.width(SpaceMedium))
+                        Text(
+                            text = stringResource(id = R.string.yes).uppercase(),
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.clickable {
+                                viewModel.onEvent(ProfileEvent.Logout)
+                                viewModel.onEvent(ProfileEvent.DismissLogoutDialog)
+                                onLogout()
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
-
 }

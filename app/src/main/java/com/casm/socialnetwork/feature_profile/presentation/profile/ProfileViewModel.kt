@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.cachedIn
 import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.core.domain.use_case.GetOwnUserIdUseCase
 import com.casm.socialnetwork.core.presentation.PagingState
@@ -21,7 +20,6 @@ import com.casm.socialnetwork.feature_profile.domain.use_case.ProfileUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,9 +28,9 @@ class ProfileViewModel @Inject constructor(
     private val profileUseCases: ProfileUseCases,
     private val postUseCases: PostUseCases,
     private val getOwnUserId: GetOwnUserIdUseCase,
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val postLiker: PostLiker
-): ViewModel() {
+) : ViewModel() {
 
     private val _toolbarState = mutableStateOf(ProfileToolbarState())
     val toolbarState: State<ProfileToolbarState> = _toolbarState
@@ -73,19 +71,35 @@ class ProfileViewModel @Inject constructor(
 
     fun setExpandedRatio(ratio: Float) {
         _toolbarState.value = _toolbarState.value.copy(expandedRatio = ratio)
-
     }
 
     fun setToolbarOffsetY(value: Float) {
         _toolbarState.value = _toolbarState.value.copy(toolbarOffsetY = value)
+    }
 
+    init {
+        loadNextPosts()
     }
 
     fun onEvent(event: ProfileEvent) {
-        when(event) {
-            is ProfileEvent.GetProfile -> {
+        when (event) {
 
+            is ProfileEvent.Logout -> {
+                profileUseCases.logout
             }
+
+            is ProfileEvent.ShowLogoutDialog -> {
+                _state.value = state.value.copy(
+                    isLogoutDialogVisible = true
+                )
+            }
+
+            is ProfileEvent.DismissLogoutDialog -> {
+                _state.value = state.value.copy(
+                    isLogoutDialogVisible = false
+                )
+            }
+
             is ProfileEvent.LikePost -> {
                 viewModelScope.launch {
                     toggleLikeForParent(
@@ -101,33 +115,6 @@ class ProfileViewModel @Inject constructor(
     fun loadNextPosts() {
         viewModelScope.launch {
             paginator.loadNextItems()
-        }
-    }
-
-     fun getProfile(userId: String?) {
-        viewModelScope.launch {
-           _state.value = state.value.copy(
-               isLoading = true
-           )
-            val result = profileUseCases.getProfile(
-                userId ?: getOwnUserId()
-            )
-            when(result) {
-                is Resource.Success -> {
-                    _state.value = state.value.copy(
-                        profile = result.data,
-                        isLoading = false
-                    )
-                }
-                is Resource.Error -> {
-                    _state.value = state.value.copy(
-                        isLoading = false
-                    )
-                    _eventFlow.emit(UiEvent.ShowSnackbar(
-                        uiText = result.uiText ?: UIText.unknownError()
-                    ))
-                }
-            }
         }
     }
 
@@ -151,6 +138,36 @@ class ProfileViewModel @Inject constructor(
                     )
                 }
             )
+        }
+    }
+
+    fun getProfile(userId: String?) {
+        viewModelScope.launch {
+            _state.value = state.value.copy(
+                isLoading = true
+            )
+            val result = profileUseCases.getProfile(
+                userId ?: getOwnUserId()
+            )
+            when (result) {
+                is Resource.Success -> {
+                    _state.value = state.value.copy(
+                        profile = result.data,
+                        isLoading = false
+                    )
+                }
+
+                is Resource.Error -> {
+                    _state.value = state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(
+                        UiEvent.ShowSnackbar(
+                            uiText = result.uiText ?: UIText.unknownError()
+                        )
+                    )
+                }
+            }
         }
     }
 }

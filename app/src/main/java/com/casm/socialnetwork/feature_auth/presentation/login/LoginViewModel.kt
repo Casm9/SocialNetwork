@@ -71,15 +71,16 @@ class LoginViewModel @Inject constructor(
                             error = loginResult.passwordError
                         )
                     }
-                    when(loginResult.result) {
+                    when (loginResult.result) {
                         is Resource.Success -> {
-                            _eventFlow.emit(
-                                UiEvent.Navigate(Screen.MainFeedScreen.route)
-                            )
+                            _eventFlow.emit(UiEvent.OnLogin)
                         }
+
                         is Resource.Error -> {
                             _eventFlow.emit(
-                                UiEvent.ShowSnackbar(loginResult.result.uiText ?: UIText.unknownError())
+                                UiEvent.ShowSnackbar(
+                                    loginResult.result.uiText ?: UIText.unknownError()
+                                )
                             )
                         }
 

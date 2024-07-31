@@ -26,7 +26,7 @@ import javax.inject.Inject
 class MainFeedViewModel @Inject constructor(
     private val postUseCases: PostUseCases,
     private val postLiker: PostLiker
-): ViewModel() {
+) : ViewModel() {
 
     private val _eventFlow = MutableSharedFlow<Event>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -55,15 +55,18 @@ class MainFeedViewModel @Inject constructor(
         }
     )
 
+    init {
+        loadNextPosts()
+    }
+
     fun onEvent(event: MainFeedEvent) {
-        when(event) {
+        when (event) {
             is MainFeedEvent.LikedPost -> {
                 toggleLikeForParent(event.postId)
             }
             else -> {}
         }
     }
-
 
     fun loadNextPosts() {
         viewModelScope.launch {
@@ -93,5 +96,4 @@ class MainFeedViewModel @Inject constructor(
             )
         }
     }
-
 }

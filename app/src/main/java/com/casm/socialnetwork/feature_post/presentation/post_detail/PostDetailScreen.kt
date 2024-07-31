@@ -27,17 +27,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberImagePainter
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.presentation.components.ActionRow
 import com.casm.socialnetwork.core.presentation.components.StandardTextField
@@ -47,25 +50,35 @@ import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeMediu
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceLarge
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
-import com.casm.socialnetwork.core.presentation.ui.theme.TextWhite
 import com.casm.socialnetwork.core.presentation.util.UiEvent
 import com.casm.socialnetwork.core.presentation.util.asString
+import com.casm.socialnetwork.core.presentation.util.sendSharePostIntent
+import com.casm.socialnetwork.core.presentation.util.showKeyboard
 import com.casm.socialnetwork.core.util.Screen
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun PostDetailScreen(
     scaffoldState: ScaffoldState,
+    imageLoader: ImageLoader,
     onNavigateUp: () -> Unit = {},
     onNavigate: (String) -> Unit = {},
-    viewModel: PostDetailViewModel = hiltViewModel()
+    viewModel: PostDetailViewModel = hiltViewModel(),
+    shouldShowKeyboard: Boolean = false
 ) {
     val state = viewModel.state.value
     val commentTextFieldState = viewModel.commentTextFieldState.value
+    val focusRequester = remember {
+        FocusRequester()
+    }
 
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
+        if (shouldShowKeyboard) {
+            context.showKeyboard()
+            focusRequester.requestFocus()
+        }
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowSnackbar -> {
@@ -118,15 +131,15 @@ fun PostDetailScreen(
                         ) {
                             state.post?.let { post ->
                                 Image(
-                                    rememberImagePainter(
-                                        data = post.imageUrl,
-                                        builder = {
-                                            crossfade(true)
-                                        }
+                                    rememberAsyncImagePainter(
+                                        model = post.imageUrl,
+                                        imageLoader = imageLoader
                                     ),
                                     contentDescription = stringResource(id = R.string.post_image),
                                     contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxWidth().aspectRatio(16f/9f)
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .aspectRatio(16f / 9f)
                                 )
                                 Column(
                                     modifier = Modifier
@@ -139,21 +152,28 @@ fun PostDetailScreen(
                                         onLikeClick = {
                                             viewModel.onEvent(PostDetailEvent.LikePost)
                                         },
-                                        onCommentClick = {},
-                                        onShareClick = {},
-                                        onUsernameClick = {},
+                                        onCommentClick = {
+                                            context.showKeyboard()
+                                            focusRequester.requestFocus()
+                                        },
+                                        onShareClick = {
+                                            context.sendSharePostIntent(post.id)
+                                        },
+                                        onUsernameClick = {
+                                            onNavigate(Screen.ProfileScreen.route + "?userId=${post.userId}")
+                                        },
                                         isLiked = state.post.isLiked
                                     )
                                     Spacer(modifier = Modifier.height(SpaceSmall))
                                     Text(
                                         text = post.description,
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = TextWhite,
+                                        color = MaterialTheme.colorScheme.onBackground,
                                     )
                                     Spacer(modifier = Modifier.height(SpaceMedium))
                                     Text(
                                         text = stringResource(
-                                            id = R.string.liked_by_x_people,
+                                            id = R.string.x_likes,
                                             post.likeCount
                                         ),
                                         fontWeight = FontWeight.Bold,
@@ -167,11 +187,9 @@ fun PostDetailScreen(
 
                         }
                         Image(
-                            rememberImagePainter(
-                                data = state.post?.profilePictureUrl,
-                                builder = {
-                                    crossfade(true)
-                                }
+                            rememberAsyncImagePainter(
+                                model = state.post?.profilePictureUrl,
+                                imageLoader = imageLoader
                             ),
                             contentDescription = stringResource(id = R.string.profile_image),
                             modifier = Modifier
@@ -197,6 +215,7 @@ fun PostDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = SpaceLarge, vertical = SpaceSmall),
+                    imageLoader = imageLoader,
                     comment = comment,
                     onLikedClick = {
                         viewModel.onEvent(PostDetailEvent.LikeComment(comment.id))
@@ -222,7 +241,8 @@ fun PostDetailScreen(
                 containerColor = MaterialTheme.colorScheme.background,
                 modifier = Modifier
                     .weight(1f),
-                hint = stringResource(id = R.string.enter_a_comment)
+                hint = stringResource(id = R.string.enter_a_comment),
+                focusRequester = focusRequester
             )
             if (viewModel.commentState.value.isLoading) {
                 CircularProgressIndicator(

@@ -31,11 +31,6 @@ class PostRepositoryImpl(
     private val gson: Gson
 ) : PostRepository {
 
-    override val posts: Flow<PagingData<Post>>
-        get() = Pager(PagingConfig(pageSize = Constants.DEFAULT_PAGE_SIZE)) {
-            PostSource(api, PostSource.Source.Follows)
-        }.flow
-
     override suspend fun createPost(
         description: String,
         imageUri: Uri

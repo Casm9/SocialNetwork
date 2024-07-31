@@ -1,6 +1,5 @@
 package com.casm.socialnetwork.core.presentation.components
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
@@ -23,31 +23,33 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
 import com.casm.socialnetwork.R
-import com.casm.socialnetwork.core.domain.models.User
 import com.casm.socialnetwork.core.domain.models.UserItem
 import com.casm.socialnetwork.core.presentation.ui.theme.IconSizeMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeSmall
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
 
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun UserProfileItem(
     user: UserItem,
+    imageLoader: ImageLoader,
+    modifier: Modifier = Modifier,
     actionIcon: @Composable () -> Unit = {},
     onItemClick: () -> Unit = {},
     onActionItemClick: () -> Unit = {},
     ownUserId: String = ""
 ) {
     Card(
-        modifier = Modifier,
+        modifier = modifier,
         shape = MaterialTheme.shapes.medium,
         onClick = onItemClick,
         elevation = 5.dp,
@@ -62,17 +64,16 @@ fun UserProfileItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Image(
-                painter = rememberImagePainter(
-                    data = user.profilePictureUrl,
-                    builder = {
-                        crossfade(true)
-                    }
+                painter = rememberAsyncImagePainter(
+                    model = user.profilePictureUrl,
+                    imageLoader = imageLoader
                 ),
                 contentDescription = stringResource(id = R.string.profile_image),
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(ProfilePictureSizeSmall)
             )
+            Spacer(modifier = Modifier.width(SpaceSmall))
             Column(
                 modifier = Modifier
                     .fillMaxHeight()

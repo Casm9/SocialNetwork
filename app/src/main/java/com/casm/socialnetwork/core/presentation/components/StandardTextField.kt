@@ -1,6 +1,6 @@
 package com.casm.socialnetwork.core.presentation.components
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -14,21 +14,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -39,9 +30,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import com.casm.socialnetwork.R
-import com.casm.socialnetwork.core.presentation.ui.theme.HintGray
 import com.casm.socialnetwork.core.presentation.ui.theme.IconSizeMedium
-import com.casm.socialnetwork.core.presentation.ui.theme.MediumGray
 import com.casm.socialnetwork.core.util.TestTags
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +52,8 @@ fun StandardTextField(
     isPasswordToggleDisplayed: Boolean = keyboardType == KeyboardType.Password,
     isPasswordVisible: Boolean = false,
     onPasswordToggleClick: (Boolean) -> Unit = {},
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester = FocusRequester()
 ) {
 
     Column(
@@ -137,9 +127,8 @@ fun StandardTextField(
             } else null,
             modifier = Modifier
                 .fillMaxWidth()
-                .semantics { testTag = TestTags.STANDARD_TEXT_FIELD },
-
-
+                .semantics { testTag = TestTags.STANDARD_TEXT_FIELD }
+                .focusRequester(focusRequester = focusRequester)
         )
         if (error.isNotEmpty()) {
             Text(

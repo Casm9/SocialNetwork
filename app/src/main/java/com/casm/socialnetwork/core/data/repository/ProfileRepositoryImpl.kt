@@ -1,5 +1,6 @@
 package com.casm.socialnetwork.core.data.repository
 
+import android.content.SharedPreferences
 import android.net.Uri
 import androidx.core.net.toFile
 import androidx.paging.Pager
@@ -31,6 +32,7 @@ class ProfileRepositoryImpl(
     private val profileApi: ProfileApi,
     private val postApi: PostApi,
     private val gson: Gson,
+    private val sharedPreferences: SharedPreferences
 ) : ProfileRepository {
 
     override suspend fun getPostsPaged(
@@ -216,6 +218,12 @@ class ProfileRepositoryImpl(
                 uiText = UIText.StringResource(R.string.error_someting_went_wrong)
             )
         }
+    }
+
+    override fun logout() {
+        sharedPreferences.edit()
+            .remove(Constants.KEY_JWT_TOKEN)
+            .apply()
     }
 
 

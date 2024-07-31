@@ -27,7 +27,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.Comment
 import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeSmall
@@ -37,6 +38,7 @@ import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
 @Composable
 fun Comment(
     modifier: Modifier = Modifier,
+    imageLoader: ImageLoader,
     comment: Comment,
     onLikedClick: (Boolean) -> Unit = {},
     onLikedByClick: () -> Unit = {}
@@ -60,11 +62,9 @@ fun Comment(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = rememberImagePainter(
-                            data = comment.profilePictureUrl,
-                            builder = {
-                                crossfade(true)
-                            }
+                        painter = rememberAsyncImagePainter(
+                            model = comment.profilePictureUrl,
+                            imageLoader = imageLoader
                         ),
                         contentDescription = stringResource(id = R.string.profile_image),
                         modifier = Modifier
@@ -99,7 +99,7 @@ fun Comment(
                     )
                     Spacer(modifier = Modifier.height(SpaceMedium))
                     Text(
-                        text = stringResource(id = R.string.liked_by_x_people, comment.likeCount),
+                        text = stringResource(id = R.string.x_likes, comment.likeCount),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.fillMaxWidth()

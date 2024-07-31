@@ -15,18 +15,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.presentation.util.UiEvent
-import com.casm.socialnetwork.core.util.Screen
 import com.casm.socialnetwork.core.util.Constants
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
-
 
 @Composable
 fun SplashScreen(
@@ -77,7 +75,7 @@ fun SplashScreen(
     ) {
         Image(
             painter = painterResource(id = R.drawable.logo),
-            contentDescription = "Logo",
+            contentDescription = stringResource(id = R.string.logo),
             modifier = Modifier.scale(scale.value)
         )
     }

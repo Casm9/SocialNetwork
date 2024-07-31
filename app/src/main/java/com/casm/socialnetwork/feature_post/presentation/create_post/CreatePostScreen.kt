@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
@@ -74,7 +75,8 @@ import java.util.UUID
 fun CreatePostScreen(
     onNavigateUp: () -> Unit = {},
     viewModel: CreatePostViewModel = hiltViewModel(),
-    scaffoldState: ScaffoldState
+    scaffoldState: ScaffoldState,
+    imageLoader: ImageLoader
 ) {
     val imageUri = viewModel.chosenImageUri.value
 
@@ -157,9 +159,8 @@ fun CreatePostScreen(
                 imageUri?.let { uri ->
                     Image(
                         painter = rememberAsyncImagePainter(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(uri)
-                                .build()
+                            model = uri,
+                            imageLoader = imageLoader
                         ),
                         contentDescription = stringResource(id = R.string.post_image),
                         modifier = Modifier.matchParentSize()

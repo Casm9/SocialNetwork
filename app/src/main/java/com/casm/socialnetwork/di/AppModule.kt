@@ -3,10 +3,14 @@ package com.casm.socialnetwork.di
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import coil.ImageLoader
+import coil.decode.SvgDecoder
 import com.casm.socialnetwork.core.domain.repository.ProfileRepository
 import com.casm.socialnetwork.core.domain.use_case.GetOwnUserIdUseCase
 import com.casm.socialnetwork.core.util.Constants
 import com.casm.socialnetwork.core.util.Constants.SHARED_PREF_NAME
+import com.casm.socialnetwork.core.util.DefaultPostLiker
+import com.casm.socialnetwork.core.util.PostLiker
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -43,6 +47,23 @@ object AppModule {
                 }
             )
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideImageLoader(app: Application): ImageLoader {
+        return ImageLoader.Builder(app)
+            .crossfade(true)
+            .components {
+                add(SvgDecoder.Factory())
+            }
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun providePostLiker(): PostLiker {
+        return DefaultPostLiker()
     }
 
     @Provides

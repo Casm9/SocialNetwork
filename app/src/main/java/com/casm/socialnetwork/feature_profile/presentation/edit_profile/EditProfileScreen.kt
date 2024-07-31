@@ -44,6 +44,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.presentation.components.StandardTextField
@@ -64,6 +66,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun EditProfileScreen(
     scaffoldState: ScaffoldState,
     onNavigateUp: () -> Unit = {},
+    imageLoader: ImageLoader,
     viewModel: EditProfileViewModel = hiltViewModel(),
     profilePictureSize: Dp = ProfilePictureSizeLarge
 ) {
@@ -146,17 +149,13 @@ fun EditProfileScreen(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             BannerEditSection(
-                bannerImage = rememberImagePainter(
-                    data = viewModel.bannerUri.value ?: profileState.profile?.bannerUrl,
-                    builder = {
-                        crossfade(true)
-                    }
+                bannerImage = rememberAsyncImagePainter(
+                    model = viewModel.bannerUri.value ?: profileState.profile?.bannerUrl,
+                    imageLoader = imageLoader
                 ),
-                profileImage = rememberImagePainter(
-                    data = viewModel.profilePictureUri.value ?: profileState.profile?.profilePictureUrl,
-                    builder = {
-                        crossfade(true)
-                    }
+                profileImage = rememberAsyncImagePainter(
+                    model = viewModel.profilePictureUri.value ?: profileState.profile?.profilePictureUrl,
+                    imageLoader = imageLoader
                 ),
                 profilePictureSize = profilePictureSize,
                 onBannerClick = {

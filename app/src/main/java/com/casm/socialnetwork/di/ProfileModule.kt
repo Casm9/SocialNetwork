@@ -1,5 +1,6 @@
 package com.casm.socialnetwork.di
 
+import android.content.SharedPreferences
 import com.casm.socialnetwork.feature_post.data.remote.PostApi
 import com.casm.socialnetwork.feature_profile.data.remote.ProfileApi
 import com.casm.socialnetwork.core.data.repository.ProfileRepositoryImpl
@@ -8,6 +9,7 @@ import com.casm.socialnetwork.core.domain.use_case.GetOwnUserIdUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetPostsForProfileUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetProfileUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetSkillsUseCase
+import com.casm.socialnetwork.feature_profile.domain.use_case.LogoutUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.ProfileUseCases
 import com.casm.socialnetwork.feature_profile.domain.use_case.SearchUserUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.SetSkillSelectedUseCase
@@ -29,7 +31,7 @@ object ProfileModule {
 
     @Provides
     @Singleton
-    fun provideProfileApi(client: OkHttpClient): ProfileApi{
+    fun provideProfileApi(client: OkHttpClient): ProfileApi {
         return Retrofit.Builder()
             .baseUrl(ProfileApi.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -40,8 +42,13 @@ object ProfileModule {
 
     @Provides
     @Singleton
-    fun provideProfileRepository(profileProfile: ProfileApi, postApi: PostApi, gson: Gson): ProfileRepository {
-        return ProfileRepositoryImpl(profileProfile, postApi, gson)
+    fun provideProfileRepository(
+        profileProfile: ProfileApi,
+        postApi: PostApi,
+        gson: Gson,
+        sharedPreferences: SharedPreferences
+    ): ProfileRepository {
+        return ProfileRepositoryImpl(profileProfile, postApi, gson, sharedPreferences)
     }
 
     @Provides
@@ -54,7 +61,8 @@ object ProfileModule {
             setSkillSelected = SetSkillSelectedUseCase(),
             getPostsForProfile = GetPostsForProfileUseCase(repository),
             searchUser = SearchUserUseCase(repository),
-            toggleFollowStateForUser = ToggleFollowStateForUserUseCase(repository)
+            toggleFollowStateForUser = ToggleFollowStateForUserUseCase(repository),
+            logout = LogoutUseCase(repository)
         )
     }
 

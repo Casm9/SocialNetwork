@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.ImageLoader
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.User
 import com.casm.socialnetwork.core.domain.models.UserItem
@@ -41,6 +42,7 @@ import com.casm.socialnetwork.core.util.Screen
 fun SearchScreen(
     onNavigate: (String) -> Unit = {},
     onNavigateUp: () -> Unit = {},
+    imageLoader: ImageLoader,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val state = viewModel.searchState.value
@@ -86,6 +88,7 @@ fun SearchScreen(
                     items(state.userItems) { user ->
                         UserProfileItem(
                             user = user,
+                            imageLoader = imageLoader,
                             actionIcon = {
                                 IconButton(
                                     onClick = {
