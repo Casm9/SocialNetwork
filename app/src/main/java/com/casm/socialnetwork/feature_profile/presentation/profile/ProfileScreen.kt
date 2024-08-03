@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,12 +17,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -48,13 +44,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import coil.decode.SvgDecoder
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.User
 import com.casm.socialnetwork.core.presentation.components.Post
-import com.casm.socialnetwork.feature_profile.presentation.profile.components.BannerSection
-import com.casm.socialnetwork.feature_profile.presentation.profile.components.ProfileHeaderSection
 import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeLarge
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
@@ -63,6 +55,8 @@ import com.casm.socialnetwork.core.presentation.util.asString
 import com.casm.socialnetwork.core.presentation.util.sendSharePostIntent
 import com.casm.socialnetwork.core.util.Screen
 import com.casm.socialnetwork.core.util.toPx
+import com.casm.socialnetwork.feature_profile.presentation.profile.components.BannerSection
+import com.casm.socialnetwork.feature_profile.presentation.profile.components.ProfileHeaderSection
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -78,6 +72,8 @@ fun ProfileScreen(
     val pagingState = viewModel.pagingState.value
     val lazyListState = rememberLazyListState()
     val toolbarState = viewModel.toolbarState.value
+    val state = viewModel.state.value
+    val context = LocalContext.current
 
     val iconHorizontalCenterLength =
         (LocalConfiguration.current.screenWidthDp.dp.toPx() / 4f -
@@ -118,11 +114,7 @@ fun ProfileScreen(
         }
     }
 
-    val state = viewModel.state.value
-    val context = LocalContext.current
-
     LaunchedEffect(key1 = true) {
-
         viewModel.getProfile(userId)
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -131,8 +123,6 @@ fun ProfileScreen(
                         message = event.uiText.asString(context)
                     )
                 }
-
-                else -> {}
             }
         }
     }

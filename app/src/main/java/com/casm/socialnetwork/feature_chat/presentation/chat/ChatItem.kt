@@ -1,4 +1,4 @@
-package com.casm.socialnetwork.core.presentation.components
+package com.casm.socialnetwork.feature_chat.presentation.chat
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,31 +30,25 @@ import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import com.casm.socialnetwork.R
-import com.casm.socialnetwork.core.domain.models.UserItem
-import com.casm.socialnetwork.core.presentation.ui.theme.IconSizeMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeSmall
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
-
+import com.casm.socialnetwork.feature_chat.domain.model.Chat
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun UserProfileItem(
-    user: UserItem,
+fun ChatItem(
+    item: Chat,
     imageLoader: ImageLoader,
-    modifier: Modifier = Modifier,
-    actionIcon: @Composable () -> Unit = {},
-    onItemClick: () -> Unit = {},
-    onActionItemClick: () -> Unit = {},
-    ownUserId: String = ""
+    onItemClick: (Chat) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
-        onClick = onItemClick,
-        elevation = 5.dp,
-
-        ) {
+        onClick = { onItemClick(item) },
+        elevation = 5.dp
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -66,7 +59,7 @@ fun UserProfileItem(
         ) {
             Image(
                 painter = rememberAsyncImagePainter(
-                    model = user.profilePictureUrl,
+                    model = item.remoteUserProfileUrl,
                     imageLoader = imageLoader
                 ),
                 contentDescription = stringResource(id = R.string.profile_image),
@@ -81,30 +74,30 @@ fun UserProfileItem(
                     .fillMaxWidth(0.8f)
                     .weight(1f)
             ) {
-                Text(
-                    text = user.username,
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.Bold,
+                Row(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        text = item.remoteUserUsername,
+                        style = MaterialTheme.typography.titleSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                        ),
+                        modifier = Modifier.weight(1f)
                     )
-                )
+                    Spacer(modifier = Modifier.width(SpaceSmall))
+                    Text(text = item.lastMessageFormattedTime)
+                }
+
                 Spacer(modifier = Modifier.height(SpaceSmall))
                 Text(
-                    text = user.bio,
+                    text = item.lastMessage,
                     style = MaterialTheme.typography.bodyMedium,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2,
                     modifier = Modifier.heightIn(
-                        min = (MaterialTheme.typography.bodyMedium.fontSize.value.dp * 2.5f)
+                        min = (MaterialTheme.typography.bodyMedium.fontSize.value.dp * 3f)
                     )
                 )
-            }
-            if (user.userId != ownUserId) {
-                IconButton(
-                    onClick = onActionItemClick,
-                    modifier = Modifier.size(IconSizeMedium)
-                ) {
-                    actionIcon()
-                }
             }
         }
     }

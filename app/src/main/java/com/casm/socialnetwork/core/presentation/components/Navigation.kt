@@ -13,16 +13,17 @@ import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import coil.ImageLoader
 import com.casm.socialnetwork.core.util.Screen
-import com.casm.socialnetwork.feature_profile.presentation.edit_profile.EditProfileScreen
 import com.casm.socialnetwork.feature_activity.presentation.ActivityScreen
-import com.casm.socialnetwork.feature_chat.presentation.chat.ChatScreen
-import com.casm.socialnetwork.feature_post.presentation.create_post.CreatePostScreen
 import com.casm.socialnetwork.feature_auth.presentation.login.LoginScreen
 import com.casm.socialnetwork.feature_auth.presentation.register.RegisterScreen
 import com.casm.socialnetwork.feature_auth.presentation.splash.SplashScreen
+import com.casm.socialnetwork.feature_chat.presentation.chat.ChatScreen
+import com.casm.socialnetwork.feature_chat.presentation.message.MessageScreen
+import com.casm.socialnetwork.feature_post.presentation.create_post.CreatePostScreen
 import com.casm.socialnetwork.feature_post.presentation.main_feed.MainFeedScreen
 import com.casm.socialnetwork.feature_post.presentation.person_list.PersonListScreen
 import com.casm.socialnetwork.feature_post.presentation.post_detail.PostDetailScreen
+import com.casm.socialnetwork.feature_profile.presentation.edit_profile.EditProfileScreen
 import com.casm.socialnetwork.feature_profile.presentation.profile.ProfileScreen
 import com.casm.socialnetwork.feature_profile.presentation.search.SearchScreen
 
@@ -71,6 +72,14 @@ fun Navigation(
         }
         composable(Screen.ChatScreen.route) {
             ChatScreen(
+                onNavigateUp = navController::navigateUp,
+                onNavigate = navController::navigate,
+                imageLoader = imageLoader
+            )
+        }
+        composable(Screen.MessagesScreen.route) {
+            MessageScreen(
+                chatId = "",
                 onNavigateUp = navController::navigateUp,
                 onNavigate = navController::navigate,
                 imageLoader = imageLoader
