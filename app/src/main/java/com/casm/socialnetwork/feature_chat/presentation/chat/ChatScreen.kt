@@ -10,43 +10,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.ImageLoader
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceLarge
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 import com.casm.socialnetwork.core.util.Screen
-import com.casm.socialnetwork.feature_chat.domain.model.Chat
 
 @Composable
 fun ChatScreen(
     onNavigate: (String) -> Unit = {},
     onNavigateUp: () -> Unit = {},
-    imageLoader: ImageLoader
+    imageLoader: ImageLoader,
+    viewModel: ChatViewModel = hiltViewModel()
 ) {
-    val chats = remember {
-        listOf(
-            Chat(
-                remoteUserUsername = "Casm",
-                remoteUserProfileUrl = "http://10.0.2.2:8001/profile_pictures/avatar.svg",
-                lastMessage = "This is last message test",
-                lastMessageFormattedTime = "14:16"
-            ),
-            Chat(
-                remoteUserUsername = "Casm",
-                remoteUserProfileUrl = "http://10.0.2.2:8001/profile_pictures/avatar.svg",
-                lastMessage = "This is last message test",
-                lastMessageFormattedTime = "14:16"
-            ),
-            Chat(
-                remoteUserUsername = "Casm",
-                remoteUserProfileUrl = "http://10.0.2.2:8001/profile_pictures/avatar.svg",
-                lastMessage = "This is last message test",
-                lastMessageFormattedTime = "14:16"
-            )
-        )
-    }
+    val chats = viewModel.state.value.chats
+    val isLoading = viewModel.state.value.isLoading
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -62,7 +42,7 @@ fun ChatScreen(
                     item = chat,
                     imageLoader = imageLoader,
                     onItemClick = {
-                        onNavigate(Screen.MessagesScreen.route)
+                        onNavigate(Screen.MessagesScreen.route + "/${chat.chatId}/${chat.remoteUserId}")
                     }
                 )
                 Spacer(modifier = Modifier.height(SpaceLarge))

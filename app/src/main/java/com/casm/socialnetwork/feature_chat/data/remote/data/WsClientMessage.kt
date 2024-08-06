@@ -1,4 +1,4 @@
-package com.casm.socialnetwork.feature_chat.data.remote.ws.data
+package com.casm.socialnetwork.feature_chat.data.remote.data
 
 data class WsClientMessage(
     val toId: String,

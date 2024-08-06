@@ -59,7 +59,7 @@ fun ChatItem(
         ) {
             Image(
                 painter = rememberAsyncImagePainter(
-                    model = item.remoteUserProfileUrl,
+                    model = item.remoteUserProfilePictureUrl,
                     imageLoader = imageLoader
                 ),
                 contentDescription = stringResource(id = R.string.profile_image),
@@ -78,14 +78,14 @@ fun ChatItem(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Text(
-                        text = item.remoteUserUsername,
+                        text = item.remoteUsername,
                         style = MaterialTheme.typography.titleSmall.copy(
                             fontWeight = FontWeight.Bold,
                         ),
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(modifier = Modifier.width(SpaceSmall))
-                    Text(text = item.lastMessageFormattedTime)
+                    Text(text = item.timestamp.toString())
                 }
 
                 Spacer(modifier = Modifier.height(SpaceSmall))

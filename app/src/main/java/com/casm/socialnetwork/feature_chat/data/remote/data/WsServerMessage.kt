@@ -1,4 +1,4 @@
-package com.casm.socialnetwork.feature_chat.data.remote.ws.data
+package com.casm.socialnetwork.feature_chat.data.remote.data
 
 import com.casm.socialnetwork.feature_chat.domain.model.Message
 import java.text.SimpleDateFormat

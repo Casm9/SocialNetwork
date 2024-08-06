@@ -1,7 +1,7 @@
-package com.casm.socialnetwork.feature_chat.data.remote.ws.util
+package com.casm.socialnetwork.feature_chat.data.remote.util
 
-import com.casm.socialnetwork.feature_chat.data.remote.ws.data.WsClientMessage
-import com.casm.socialnetwork.feature_chat.data.remote.ws.data.WsServerMessage
+import com.casm.socialnetwork.feature_chat.data.remote.data.WsClientMessage
+import com.casm.socialnetwork.feature_chat.data.remote.data.WsServerMessage
 import com.google.gson.Gson
 import com.tinder.scarlet.Message
 import com.tinder.scarlet.MessageAdapter

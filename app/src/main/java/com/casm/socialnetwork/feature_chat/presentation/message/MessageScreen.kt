@@ -49,7 +49,6 @@ fun MessageScreen(
                 text = "Hello World",
                 formattedTime = "18:54",
                 chatId = "",
-                id = ""
             ),
             Message(
                 fromId = "",
@@ -57,7 +56,6 @@ fun MessageScreen(
                 text = "Hello World",
                 formattedTime = "18:54",
                 chatId = "",
-                id = ""
             ),
             Message(
                 fromId = "",
@@ -65,7 +63,6 @@ fun MessageScreen(
                 text = "Hello World",
                 formattedTime = "18:54",
                 chatId = "",
-                id = ""
             ),
         )
     }
