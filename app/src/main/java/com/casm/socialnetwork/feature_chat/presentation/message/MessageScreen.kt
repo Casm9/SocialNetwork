@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,44 +28,24 @@ import com.casm.socialnetwork.core.presentation.components.StandardToolBar
 import com.casm.socialnetwork.core.presentation.ui.theme.DarkerGreen
 import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeSmall
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
-import com.casm.socialnetwork.feature_chat.domain.model.Message
 import com.casm.socialnetwork.feature_chat.presentation.message.components.OwnMessage
 import com.casm.socialnetwork.feature_chat.presentation.message.components.RemoteMessage
+import okio.ByteString.Companion.decodeBase64
+import java.nio.charset.Charset
 
 @Composable
 fun MessageScreen(
+    remoteUsername: String,
+    encodedRemoteUserProfilePictureUrl: String,
     imageLoader: ImageLoader,
-    chatId: String,
     onNavigateUp: () -> Unit = {},
     onNavigate: (String) -> Unit = {},
     viewModel: MessageViewModel = hiltViewModel()
 ) {
-    val messages = remember {
-        listOf(
-            Message(
-                fromId = "",
-                toId = "",
-                text = "Hello World",
-                formattedTime = "18:54",
-                chatId = "",
-            ),
-            Message(
-                fromId = "",
-                toId = "",
-                text = "Hello World",
-                formattedTime = "18:54",
-                chatId = "",
-            ),
-            Message(
-                fromId = "",
-                toId = "",
-                text = "Hello World",
-                formattedTime = "18:54",
-                chatId = "",
-            ),
-        )
+    val decodedRemoteUserProfilePictureUrl = remember {
+        encodedRemoteUserProfilePictureUrl.decodeBase64()?.string(Charset.defaultCharset())
     }
-
+    val pagingState = viewModel.pagingState.value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,7 +57,7 @@ fun MessageScreen(
             title = {
                 Image(
                     painter = rememberAsyncImagePainter(
-                        model = "http://10.0.2.2:8001/profile_pictures/avatar.svg",
+                        model = decodedRemoteUserProfilePictureUrl,
                         imageLoader = imageLoader
                     ),
                     contentDescription = null,
@@ -88,7 +67,7 @@ fun MessageScreen(
                 )
                 Spacer(modifier = Modifier.width(SpaceMedium))
                 Text(
-                    text = "Casm",
+                    text = remoteUsername,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineSmall
                 )
@@ -102,7 +81,11 @@ fun MessageScreen(
                     .weight(1f)
                     .padding(SpaceMedium)
             ) {
-                items(messages) { message ->
+                items (pagingState.items.size) { i ->
+                    val message = pagingState.items[i]
+                    if (i >= pagingState.items.size - 1 && !pagingState.endReached && !pagingState.isLoading) {
+                        viewModel.loadNextMessages()
+                    }
                     RemoteMessage(
                         message = message.text,
                         formattedTime = message.formattedTime,
@@ -110,12 +93,13 @@ fun MessageScreen(
                         textColor = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.height(SpaceMedium))
-                    OwnMessage(
-                        message = message.text,
-                        formattedTime = message.formattedTime,
-                        color = DarkerGreen,
-                        textColor = MaterialTheme.colorScheme.onBackground
-                    )
+
+                        OwnMessage(
+                            message = message.text,
+                            formattedTime = message.formattedTime,
+                            color = DarkerGreen,
+                            textColor = MaterialTheme.colorScheme.onBackground
+                        )
                     Spacer(modifier = Modifier.height(SpaceMedium))
                 }
 

@@ -1,5 +1,6 @@
 package com.casm.socialnetwork.feature_chat.presentation.chat
 
+import android.util.Base64
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -42,7 +43,7 @@ fun ChatScreen(
                     item = chat,
                     imageLoader = imageLoader,
                     onItemClick = {
-                        onNavigate(Screen.MessagesScreen.route + "/${chat.chatId}/${chat.remoteUserId}")
+                        onNavigate(Screen.MessagesScreen.route + "/${chat.chatId}/${chat.remoteUserId}/${chat.remoteUsername}/${Base64.encodeToString(chat.remoteUserProfilePictureUrl.encodeToByteArray(), 0)}?chatId=${chat.chatId}")
                     }
                 )
                 Spacer(modifier = Modifier.height(SpaceLarge))

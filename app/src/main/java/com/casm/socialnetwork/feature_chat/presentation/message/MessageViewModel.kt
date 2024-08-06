@@ -2,28 +2,73 @@ package com.casm.socialnetwork.feature_chat.presentation.message
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.casm.socialnetwork.core.domain.states.StandardTextFieldState
+import com.casm.socialnetwork.core.presentation.PagingState
 import com.casm.socialnetwork.core.presentation.util.UiEvent
+import com.casm.socialnetwork.core.util.DefaultPaginator
+import com.casm.socialnetwork.core.util.Resource
+import com.casm.socialnetwork.core.util.UIText
+import com.casm.socialnetwork.feature_chat.domain.model.Message
 import com.casm.socialnetwork.feature_chat.domain.use_case.ChatUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MessageViewModel @Inject constructor(
-    private val chatUseCases: ChatUseCases
+    private val chatUseCases: ChatUseCases,
+    private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
     private val _messageTextFieldState = mutableStateOf(StandardTextFieldState())
     val messageTextFieldState: State<StandardTextFieldState> = _messageTextFieldState
+
+    private val _pagingState = mutableStateOf<PagingState<Message>>(PagingState())
+    val pagingState: State<PagingState<Message>> = _pagingState
 
     private val _state = mutableStateOf(MessageState())
     val state: State<MessageState> = _state
 
     private val _eventFLow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFLow.asSharedFlow()
+
+    private val paginator = DefaultPaginator(
+        onLoadUpdated = { isLoading ->
+            _pagingState.value = pagingState.value.copy(isLoading = isLoading)
+        },
+        onRequest = { nextPage ->
+            savedStateHandle.get<String>("chatId")?.let { chatId ->
+                chatUseCases.getMessagesForChat(
+                    chatId, nextPage
+                )
+            } ?: Resource.Error(UIText.unknownError())
+        },
+        onError = { errorUiText ->
+            _eventFLow.emit(UiEvent.ShowSnackbar(errorUiText))
+        },
+        onSuccess = { messages ->
+            _pagingState.value = pagingState.value.copy(
+                items = pagingState.value.items + messages,
+                endReached = messages.isEmpty(),
+                isLoading = false
+            )
+        }
+    )
+
+    init {
+        loadNextMessages()
+    }
+
+    fun loadNextMessages() {
+        viewModelScope.launch {
+            paginator.loadNextItems()
+        }
+    }
 
     fun onEvent(event: MessageEvent) {
         when(event) {

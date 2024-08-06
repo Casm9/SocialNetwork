@@ -9,6 +9,7 @@ import com.casm.socialnetwork.feature_chat.data.repository.ChatRepositoryImpl
 import com.casm.socialnetwork.feature_chat.domain.repository.ChatRepository
 import com.casm.socialnetwork.feature_chat.domain.use_case.ChatUseCases
 import com.casm.socialnetwork.feature_chat.domain.use_case.GetChatsForUser
+import com.casm.socialnetwork.feature_chat.domain.use_case.GetMessagesForChat
 import com.casm.socialnetwork.feature_chat.domain.use_case.ObserveChatEvents
 import com.casm.socialnetwork.feature_chat.domain.use_case.ObserveMessages
 import com.casm.socialnetwork.feature_chat.domain.use_case.SendMessage
@@ -54,7 +55,8 @@ object ChatModule {
             sendMessage = SendMessage(repository),
             observeChatEvents = ObserveChatEvents(repository),
             observeMessages = ObserveMessages(repository),
-            getChatsForUser = GetChatsForUser(repository)
+            getChatsForUser = GetChatsForUser(repository),
+            getMessagesForChat = GetMessagesForChat(repository)
         )
     }
 
