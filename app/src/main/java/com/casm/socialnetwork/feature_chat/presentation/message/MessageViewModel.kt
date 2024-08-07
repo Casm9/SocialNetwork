@@ -71,12 +71,13 @@ class MessageViewModel @Inject constructor(
     }
 
     private fun observeChatMessages() {
-        chatUseCases.observeMessages().onEach { message ->
-            println("Message received: $message")
-            _state.value = state.value.copy(
-                messages = state.value.messages + message
-            )
-        }.launchIn(viewModelScope)
+        viewModelScope.launch {
+            chatUseCases.observeMessages().collect { message ->
+                _pagingState.value = pagingState.value.copy(
+                    items = pagingState.value.items + message
+                )
+            }
+        }
     }
 
     private fun observeChatEvents() {

@@ -5,17 +5,17 @@ import com.casm.socialnetwork.feature_chat.data.remote.data.WsServerMessage
 import com.tinder.scarlet.WebSocket
 import com.tinder.scarlet.ws.Receive
 import com.tinder.scarlet.ws.Send
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.channels.ReceiveChannel
 
 interface ChatService {
     @Receive
-    fun observeEvents(): Flow<WebSocket.Event>
+    fun observeEvents(): ReceiveChannel<WebSocket.Event>
 
     @Send
     fun sendMessage(message: WsClientMessage)
 
     @Receive
-    fun observeMessages(): Flow<WsServerMessage>
+    fun observeMessages(): ReceiveChannel<WsServerMessage>
 
 
 

@@ -1,9 +1,9 @@
 package com.casm.socialnetwork.feature_chat.di
 
+import com.casm.socialnetwork.core.util.Constants
 import com.casm.socialnetwork.feature_chat.data.remote.ChatApi
 import com.casm.socialnetwork.feature_chat.data.remote.ChatService
 import com.casm.socialnetwork.feature_chat.data.remote.util.CustomGsonMessageAdapter
-import com.casm.socialnetwork.feature_chat.data.remote.util.FlowStreamAdapter
 import com.casm.socialnetwork.feature_chat.data.repository.ChatRepositoryImpl
 import com.casm.socialnetwork.feature_chat.domain.repository.ChatRepository
 import com.casm.socialnetwork.feature_chat.domain.use_case.ChatUseCases
@@ -14,7 +14,9 @@ import com.casm.socialnetwork.feature_chat.domain.use_case.ObserveMessages
 import com.casm.socialnetwork.feature_chat.domain.use_case.SendMessage
 import com.google.gson.Gson
 import com.tinder.scarlet.Scarlet
+import com.tinder.scarlet.retry.LinearBackoffStrategy
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
+import com.tinder.streamadapter.coroutines.CoroutinesStreamAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,9 +36,11 @@ object ChatModule {
     fun provideScarlet(gson: Gson, client: OkHttpClient): Scarlet {
         return Scarlet.Builder()
             .addMessageAdapterFactory(CustomGsonMessageAdapter.Factory(gson))
-            .addStreamAdapterFactory(FlowStreamAdapter.Factory)
+            .addStreamAdapterFactory(CoroutinesStreamAdapterFactory())
             .webSocketFactory(client.newWebSocketFactory("ws://10.0.2.2:8001/api/chat/websocket"))
+            .backoffStrategy(LinearBackoffStrategy(Constants.RECONNECT_INTERVAL))
             .build()
+            .create()
     }
 
     @Provides

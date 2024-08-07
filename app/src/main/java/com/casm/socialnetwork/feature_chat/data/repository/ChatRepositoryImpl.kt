@@ -12,6 +12,7 @@ import com.casm.socialnetwork.feature_chat.domain.repository.ChatRepository
 import com.tinder.scarlet.WebSocket
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -58,11 +59,11 @@ class ChatRepositoryImpl(
     }
 
     override fun observeChatEvent(): Flow<WebSocket.Event> {
-        return chatService.observeEvents()
+        return chatService.observeEvents().receiveAsFlow()
     }
 
     override fun observeMessages(): Flow<Message> {
-        return chatService.observeMessages().map { it.toMessage() }
+        return chatService.observeMessages().receiveAsFlow().map { it.toMessage() }
     }
 
     override fun sendMessage(toId: String, text: String, chatId: String?) {
