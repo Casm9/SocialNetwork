@@ -43,7 +43,7 @@ fun ChatScreen(
                     item = chat,
                     imageLoader = imageLoader,
                     onItemClick = {
-                        onNavigate(Screen.MessagesScreen.route + "/${chat.chatId}/${chat.remoteUserId}/${chat.remoteUsername}/${Base64.encodeToString(chat.remoteUserProfilePictureUrl.encodeToByteArray(), 0)}?chatId=${chat.chatId}")
+                        onNavigate(Screen.MessagesScreen.route + "/${chat.remoteUserId}/${chat.remoteUsername}/${Base64.encodeToString(chat.remoteUserProfilePictureUrl.encodeToByteArray(), 0)}?chatId=${chat.chatId}")
                     }
                 )
                 Spacer(modifier = Modifier.height(SpaceLarge))
