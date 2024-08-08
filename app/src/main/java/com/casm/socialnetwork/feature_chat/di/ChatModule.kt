@@ -1,22 +1,15 @@
 package com.casm.socialnetwork.feature_chat.di
 
-import com.casm.socialnetwork.core.util.Constants
 import com.casm.socialnetwork.feature_chat.data.remote.ChatApi
-import com.casm.socialnetwork.feature_chat.data.remote.ChatService
-import com.casm.socialnetwork.feature_chat.data.remote.util.CustomGsonMessageAdapter
 import com.casm.socialnetwork.feature_chat.data.repository.ChatRepositoryImpl
 import com.casm.socialnetwork.feature_chat.domain.repository.ChatRepository
 import com.casm.socialnetwork.feature_chat.domain.use_case.ChatUseCases
 import com.casm.socialnetwork.feature_chat.domain.use_case.GetChatsForUser
 import com.casm.socialnetwork.feature_chat.domain.use_case.GetMessagesForChat
+import com.casm.socialnetwork.feature_chat.domain.use_case.InitializeRepository
 import com.casm.socialnetwork.feature_chat.domain.use_case.ObserveChatEvents
 import com.casm.socialnetwork.feature_chat.domain.use_case.ObserveMessages
 import com.casm.socialnetwork.feature_chat.domain.use_case.SendMessage
-import com.google.gson.Gson
-import com.tinder.scarlet.Scarlet
-import com.tinder.scarlet.retry.LinearBackoffStrategy
-import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
-import com.tinder.streamadapter.coroutines.CoroutinesStreamAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,32 +25,14 @@ import javax.inject.Singleton
 object ChatModule {
 
     @Provides
-    @Singleton
-    fun provideScarlet(gson: Gson, client: OkHttpClient): Scarlet {
-        return Scarlet.Builder()
-            .addMessageAdapterFactory(CustomGsonMessageAdapter.Factory(gson))
-            .addStreamAdapterFactory(CoroutinesStreamAdapterFactory())
-            .webSocketFactory(client.newWebSocketFactory("ws://10.0.2.2:8001/api/chat/websocket"))
-            .backoffStrategy(LinearBackoffStrategy(Constants.RECONNECT_INTERVAL))
-            .build()
-            .create()
-    }
-
-    @Provides
-    @Singleton
-    fun provideChatService(scarlet: Scarlet): ChatService {
-        return scarlet.create()
-    }
-
-    @Provides
-    @Singleton
     fun provideChatUseCases(repository: ChatRepository): ChatUseCases {
         return ChatUseCases(
             sendMessage = SendMessage(repository),
             observeChatEvents = ObserveChatEvents(repository),
             observeMessages = ObserveMessages(repository),
             getChatsForUser = GetChatsForUser(repository),
-            getMessagesForChat = GetMessagesForChat(repository)
+            getMessagesForChat = GetMessagesForChat(repository),
+            initializeRepository = InitializeRepository(repository)
         )
     }
 
@@ -73,8 +48,7 @@ object ChatModule {
     }
 
     @Provides
-    @Singleton
-    fun provideChatRepository(chatService: ChatService, chatApi: ChatApi): ChatRepository {
-        return ChatRepositoryImpl(chatService, chatApi)
+    fun provideChatRepository(chatApi: ChatApi, client: OkHttpClient): ChatRepository {
+        return ChatRepositoryImpl(chatApi, client)
     }
 }

@@ -3,26 +3,21 @@ package com.casm.socialnetwork.core.data.repository
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.core.net.toFile
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import com.casm.socialnetwork.R
-import com.casm.socialnetwork.feature_post.data.remote.PostApi
 import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.core.domain.models.UserItem
+import com.casm.socialnetwork.core.domain.repository.ProfileRepository
 import com.casm.socialnetwork.core.util.Constants
 import com.casm.socialnetwork.core.util.Resource
 import com.casm.socialnetwork.core.util.SimpleResource
 import com.casm.socialnetwork.core.util.UIText
-import com.casm.socialnetwork.feature_auth.data.paging.PostSource
+import com.casm.socialnetwork.feature_post.data.remote.PostApi
 import com.casm.socialnetwork.feature_profile.data.remote.ProfileApi
 import com.casm.socialnetwork.feature_profile.data.remote.request.FollowUpdateRequest
 import com.casm.socialnetwork.feature_profile.domain.model.Profile
 import com.casm.socialnetwork.feature_profile.domain.model.Skill
 import com.casm.socialnetwork.feature_profile.domain.model.UpdateProfileData
-import com.casm.socialnetwork.core.domain.repository.ProfileRepository
 import com.google.gson.Gson
-import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.HttpException
@@ -222,7 +217,8 @@ class ProfileRepositoryImpl(
 
     override fun logout() {
         sharedPreferences.edit()
-            .remove(Constants.KEY_JWT_TOKEN)
+            .putString(Constants.KEY_JWT_TOKEN, "")
+            .putString(Constants.KEY_USER_ID, "")
             .apply()
     }
 
