@@ -61,7 +61,7 @@ fun SendTextField(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.Send,
-                    tint = if (state.error == null) {
+                    tint = if (state.error == null && canSendMessage) {
                         MaterialTheme.colorScheme.primary
                     } else MaterialTheme.colorScheme.background,
                     contentDescription = stringResource(id = R.string.send_comment)

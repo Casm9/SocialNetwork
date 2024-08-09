@@ -4,7 +4,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.cachedIn
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.core.presentation.PagingState
@@ -64,7 +63,30 @@ class MainFeedViewModel @Inject constructor(
             is MainFeedEvent.LikedPost -> {
                 toggleLikeForParent(event.postId)
             }
-            else -> {}
+
+            is MainFeedEvent.DeletePost -> {
+                deletePost(event.post.id)
+            }
+        }
+    }
+
+    private fun deletePost(postId: String) {
+        viewModelScope.launch {
+            when (val result = postUseCases.deletePost(postId)) {
+                is Resource.Success -> {
+                    _pagingState.value = pagingState.value.copy(
+                        items = pagingState.value.items.filter {
+                            it.id != postId
+                        }
+                    )
+                    _eventFlow.emit(UiEvent.ShowSnackbar(UIText.StringResource(R.string.successfully_deleted_post)))
+                }
+
+                is Resource.Error -> {
+                    _eventFlow.emit(UiEvent.ShowSnackbar(result.uiText ?: UIText.unknownError()))
+                }
+            }
+
         }
     }
 

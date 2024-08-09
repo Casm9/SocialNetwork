@@ -1,5 +1,6 @@
 package com.casm.socialnetwork.di
 
+import com.casm.socialnetwork.core.domain.use_case.DeletePostUseCase
 import com.casm.socialnetwork.feature_post.data.remote.PostApi
 import com.casm.socialnetwork.feature_post.data.repository.PostRepositoryImpl
 import com.casm.socialnetwork.feature_post.domain.repository.PostRepository
@@ -58,6 +59,7 @@ object PostModule {
             createComment = CreateCommentUseCase(repository),
             toggleLikeForParent = ToggleLikeForParentUseCase(repository),
             getLikesForParent = GetLikesForParentUseCase(repository),
+            deletePost = DeletePostUseCase(repository)
         )
     }
 }

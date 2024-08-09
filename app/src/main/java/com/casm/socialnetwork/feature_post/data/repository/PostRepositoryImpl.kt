@@ -2,25 +2,19 @@ package com.casm.socialnetwork.feature_post.data.repository
 
 import android.net.Uri
 import androidx.core.net.toFile
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import com.casm.socialnetwork.R
+import com.casm.socialnetwork.core.domain.models.Comment
 import com.casm.socialnetwork.core.domain.models.Post
-import com.casm.socialnetwork.core.util.Constants
+import com.casm.socialnetwork.core.domain.models.UserItem
 import com.casm.socialnetwork.core.util.Resource
 import com.casm.socialnetwork.core.util.SimpleResource
 import com.casm.socialnetwork.core.util.UIText
-import com.casm.socialnetwork.feature_auth.data.paging.PostSource
 import com.casm.socialnetwork.feature_post.data.remote.PostApi
-import com.casm.socialnetwork.core.domain.models.Comment
-import com.casm.socialnetwork.core.domain.models.UserItem
 import com.casm.socialnetwork.feature_post.data.remote.request.CreateCommentRequest
 import com.casm.socialnetwork.feature_post.data.remote.request.CreatePostRequest
 import com.casm.socialnetwork.feature_post.data.remote.request.LikeUpdateRequest
 import com.casm.socialnetwork.feature_post.domain.repository.PostRepository
 import com.google.gson.Gson
-import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.HttpException
@@ -163,8 +157,8 @@ class PostRepositoryImpl(
     override suspend fun unlikeParent(parentId: String, parentType: Int): SimpleResource {
         return try {
             val response = api.unlikeParent(
-                    parentId = parentId,
-                    parentType = parentType
+                parentId = parentId,
+                parentType = parentType
             )
             if (response.successful) {
                 Resource.Success(response.data)
@@ -209,11 +203,26 @@ class PostRepositoryImpl(
                 pageSize = pageSize
             )
             Resource.Success(data = posts)
-        } catch(e: IOException) {
+        } catch (e: IOException) {
             Resource.Error(
                 uiText = UIText.StringResource(R.string.error_couldnt_reach_server)
             )
-        } catch(e: HttpException) {
+        } catch (e: HttpException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_someting_went_wrong)
+            )
+        }
+    }
+
+    override suspend fun deletePost(postId: String): SimpleResource {
+        return try {
+            api.deletePost(postId)
+            Resource.Success(Unit)
+        } catch (e: IOException) {
+            Resource.Error(
+                uiText = UIText.StringResource(R.string.error_couldnt_reach_server)
+            )
+        } catch (e: HttpException) {
             Resource.Error(
                 uiText = UIText.StringResource(R.string.error_someting_went_wrong)
             )

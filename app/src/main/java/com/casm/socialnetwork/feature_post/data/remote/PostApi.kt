@@ -2,14 +2,11 @@ package com.casm.socialnetwork.feature_post.data.remote
 
 import com.casm.socialnetwork.core.data.dto.response.BasicApiResponse
 import com.casm.socialnetwork.core.data.dto.response.UserItemDto
-import com.casm.socialnetwork.core.domain.models.Comment
 import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.feature_post.data.remote.dto.CommentDto
 import com.casm.socialnetwork.feature_post.data.remote.request.CreateCommentRequest
-import com.casm.socialnetwork.feature_post.data.remote.request.CreatePostRequest
 import com.casm.socialnetwork.feature_post.data.remote.request.LikeUpdateRequest
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -22,8 +19,8 @@ interface PostApi {
 
     @GET("/api/post/get")
     suspend fun getPostsForFollows(
-       @Query("page") page: Int,
-       @Query("pageSize") pageSize: Int
+        @Query("page") page: Int,
+        @Query("pageSize") pageSize: Int
     ): List<Post>
 
 
@@ -71,6 +68,11 @@ interface PostApi {
     suspend fun getLikesForParent(
         @Query("parentId") parentId: String
     ): List<UserItemDto>
+
+    @DELETE("/api/post/delete")
+    suspend fun deletePost(
+        @Query("postId") postId: String
+    )
 
     companion object {
         const val BASE_URL = "http://10.0.2.2:8001/"
