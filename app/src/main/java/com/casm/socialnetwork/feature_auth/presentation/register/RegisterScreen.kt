@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.presentation.components.StandardTextField
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceLarge
@@ -43,6 +44,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun RegisterScreen(
+    navController: NavController,
     onPopBackStack: () -> Unit = {},
     scaffoldState: ScaffoldState,
     viewModel: RegisterViewModel = hiltViewModel()
@@ -55,6 +57,12 @@ fun RegisterScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(key1 = true) {
+        viewModel.onRegister.collect {
+            onPopBackStack()
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowSnackbar -> {
@@ -64,6 +72,7 @@ fun RegisterScreen(
                         duration = SnackbarDuration.Long
                     )
                 }
+
                 else -> Unit
             }
         }
@@ -195,7 +204,7 @@ fun RegisterScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .clickable {
-                    onPopBackStack()
+                    navController.popBackStack()
                 }
         )
     }
