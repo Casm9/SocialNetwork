@@ -120,6 +120,10 @@ class MessageViewModel @Inject constructor(
 
         _messageTextFieldState.value = StandardTextFieldState()
 
+        _state.value = state.value.copy(
+            canSendMessage = false
+        )
+
         viewModelScope.launch {
             _messageUpdatedEvent.emit(MessageUpdateEvent.MessageSent)
         }
@@ -131,6 +135,9 @@ class MessageViewModel @Inject constructor(
             is MessageEvent.EnteredMessage -> {
                 _messageTextFieldState.value = messageTextFieldState.value.copy(
                     text = event.message
+                )
+                _state.value = state.value.copy(
+                    canSendMessage = event.message.isNotBlank()
                 )
             }
 

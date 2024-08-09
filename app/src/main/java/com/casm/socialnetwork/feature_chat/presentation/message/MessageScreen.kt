@@ -50,6 +50,7 @@ fun MessageScreen(
         encodedRemoteUserProfilePictureUrl.decodeBase64()?.string(Charset.defaultCharset())
     }
     val pagingState = viewModel.pagingState.value
+    val state = viewModel.state.value
     val lazyListState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -134,6 +135,7 @@ fun MessageScreen(
             }
             SendTextField(
                 state = viewModel.messageTextFieldState.value,
+                canSendMessage = state.canSendMessage,
                 onValueChange = {
                     viewModel.onEvent(MessageEvent.EnteredMessage(it))
                 },

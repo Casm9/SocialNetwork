@@ -28,6 +28,7 @@ fun SendTextField(
     onSend: () -> Unit,
     hint: String = "",
     isLoading: Boolean = false,
+    canSendMessage: Boolean = true,
     focusRequester: FocusRequester = FocusRequester()
 ) {
     Row(
@@ -56,7 +57,7 @@ fun SendTextField(
         } else {
             IconButton(
                 onClick = onSend,
-                enabled = state.error == null
+                enabled = state.error == null || !canSendMessage
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.Send,
