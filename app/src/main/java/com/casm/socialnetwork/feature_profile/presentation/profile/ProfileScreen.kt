@@ -53,6 +53,7 @@ import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
 import com.casm.socialnetwork.core.presentation.util.UiEvent
 import com.casm.socialnetwork.core.presentation.util.asString
+import com.casm.socialnetwork.core.presentation.util.openUrlInBrowser
 import com.casm.socialnetwork.core.presentation.util.sendSharePostIntent
 import com.casm.socialnetwork.core.util.Screen
 import com.casm.socialnetwork.core.util.toPx
@@ -238,7 +239,16 @@ fun ProfileScreen(
                     shouldShowGithub = !profile.gitHubUrl.isNullOrBlank(),
                     shouldShowInstagram = !profile.instagramUrl.isNullOrBlank(),
                     shouldShowLinkedIn = !profile.linkedInUrl.isNullOrBlank(),
-                    bannerUrl = profile.bannerUrl
+                    bannerUrl = profile.bannerUrl,
+                    onGitHubClick = {
+                        context.openUrlInBrowser(profile.gitHubUrl ?: return@BannerSection)
+                    },
+                    onInstagramClick = {
+                        context.openUrlInBrowser(profile.instagramUrl ?: return@BannerSection)
+                    },
+                    onLinkedInClick = {
+                        context.openUrlInBrowser(profile.linkedInUrl ?: return@BannerSection)
+                    }
                 )
                 Image(
                     painter = rememberAsyncImagePainter(

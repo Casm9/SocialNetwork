@@ -2,6 +2,7 @@ package com.casm.socialnetwork.core.presentation.util
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.view.inputmethod.InputMethodManager
 import com.casm.socialnetwork.R
 
@@ -19,7 +20,16 @@ fun Context.sendSharePostIntent(postId: String) {
         )
         type = "text/plain"
     }
-    if(intent.resolveActivity(packageManager) != null) {
+    if (intent.resolveActivity(packageManager) != null) {
         startActivity(Intent.createChooser(intent, "Select an app"))
     }
+}
+
+fun Context.openUrlInBrowser(url: String) {
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        data = Uri.parse(url)
+    }
+
+    startActivity(Intent.createChooser(intent, "Select an app"))
+
 }
