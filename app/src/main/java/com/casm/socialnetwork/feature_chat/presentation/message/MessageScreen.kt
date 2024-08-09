@@ -10,13 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,6 +50,26 @@ fun MessageScreen(
         encodedRemoteUserProfilePictureUrl.decodeBase64()?.string(Charset.defaultCharset())
     }
     val pagingState = viewModel.pagingState.value
+    val lazyListState = rememberLazyListState()
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(key1 = pagingState, key2 = keyboardController) {
+        viewModel.messageUpdatedEvent.collect { event ->
+            when(event) {
+                is MessageViewModel.MessageUpdateEvent.SingleMessageUpdate,
+                is MessageViewModel.MessageUpdateEvent.MessagePageLoaded -> {
+                    if (pagingState.items.isEmpty()) {
+                        return@collect
+                    }
+                    lazyListState.scrollToItem(pagingState.items.size - 1)
+                }
+                is MessageViewModel.MessageUpdateEvent.MessageSent -> {
+                    keyboardController?.hide()
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,11 +101,12 @@ fun MessageScreen(
             modifier = Modifier.weight(1f)
         ) {
             LazyColumn(
+                state = lazyListState,
                 modifier = Modifier
                     .weight(1f)
                     .padding(SpaceMedium)
             ) {
-                items (pagingState.items.size) { i ->
+                items(pagingState.items.size) { i ->
                     val message = pagingState.items[i]
                     if (i >= pagingState.items.size - 1 && !pagingState.endReached && !pagingState.isLoading) {
                         viewModel.loadNextMessages()
@@ -95,8 +119,7 @@ fun MessageScreen(
                             textColor = MaterialTheme.colorScheme.onBackground
                         )
                         Spacer(modifier = Modifier.height(SpaceMedium))
-                    }
-                    else {
+                    } else {
                         OwnMessage(
                             message = message.text,
                             formattedTime = message.formattedTime,

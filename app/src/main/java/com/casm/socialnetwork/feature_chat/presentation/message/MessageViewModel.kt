@@ -26,7 +26,7 @@ import javax.inject.Inject
 class MessageViewModel @Inject constructor(
     private val chatUseCases: ChatUseCases,
     private val savedStateHandle: SavedStateHandle
-): ViewModel() {
+) : ViewModel() {
 
     private val _messageTextFieldState = mutableStateOf(StandardTextFieldState())
     val messageTextFieldState: State<StandardTextFieldState> = _messageTextFieldState
@@ -39,6 +39,9 @@ class MessageViewModel @Inject constructor(
 
     private val _eventFLow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFLow.asSharedFlow()
+
+    private val _messageUpdatedEvent = MutableSharedFlow<MessageUpdateEvent>(replay = 1)
+    val messageUpdatedEvent = _messageUpdatedEvent.asSharedFlow()
 
     private val paginator = DefaultPaginator(
         onLoadUpdated = { isLoading ->
@@ -60,14 +63,18 @@ class MessageViewModel @Inject constructor(
                 endReached = messages.isEmpty(),
                 isLoading = false
             )
+
+            viewModelScope.launch {
+                _messageUpdatedEvent.emit(MessageUpdateEvent.MessagePageLoaded)
+            }
         }
     )
 
     init {
+        chatUseCases.initializeRepository()
         loadNextMessages()
         observeChatMessages()
         observeChatEvents()
-
     }
 
     private fun observeChatMessages() {
@@ -76,6 +83,7 @@ class MessageViewModel @Inject constructor(
                 _pagingState.value = pagingState.value.copy(
                     items = pagingState.value.items + message
                 )
+                _messageUpdatedEvent.emit(MessageUpdateEvent.SingleMessageUpdate)
             }
         }
     }
@@ -108,19 +116,33 @@ class MessageViewModel @Inject constructor(
             return
         }
         val chatId = savedStateHandle.get<String>("chatId")
-        chatUseCases.sendMessage(toId, messageTextFieldState.value.text, chatId )
+        chatUseCases.sendMessage(toId, messageTextFieldState.value.text, chatId)
+
+        _messageTextFieldState.value = StandardTextFieldState()
+
+        viewModelScope.launch {
+            _messageUpdatedEvent.emit(MessageUpdateEvent.MessageSent)
+        }
+
     }
 
     fun onEvent(event: MessageEvent) {
-        when(event) {
+        when (event) {
             is MessageEvent.EnteredMessage -> {
                 _messageTextFieldState.value = messageTextFieldState.value.copy(
                     text = event.message
                 )
             }
+
             is MessageEvent.SendMessage -> {
                 sendMessage()
             }
         }
+    }
+
+    sealed class MessageUpdateEvent {
+        data object SingleMessageUpdate: MessageUpdateEvent()
+        data object MessagePageLoaded: MessageUpdateEvent()
+        data object MessageSent: MessageUpdateEvent()
     }
 }
