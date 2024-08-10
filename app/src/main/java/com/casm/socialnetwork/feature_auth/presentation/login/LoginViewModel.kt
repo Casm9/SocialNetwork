@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.casm.socialnetwork.core.domain.states.StandardTextFieldState
 import com.casm.socialnetwork.core.presentation.util.UiEvent
 import com.casm.socialnetwork.core.util.Resource
-import com.casm.socialnetwork.core.util.Screen
 import com.casm.socialnetwork.core.util.UIText
 import com.casm.socialnetwork.feature_auth.domain.use_case.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -86,7 +85,6 @@ class LoginViewModel @Inject constructor(
 
                         else -> {}
                     }
-
                 }
             }
         }

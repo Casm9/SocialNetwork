@@ -62,7 +62,6 @@ fun PostDetailScreen(
     shouldShowKeyboard: Boolean = false
 ) {
     val state = viewModel.state.value
-    val commentTextFieldState = viewModel.commentTextFieldState.value
     val focusRequester = remember {
         FocusRequester()
     }

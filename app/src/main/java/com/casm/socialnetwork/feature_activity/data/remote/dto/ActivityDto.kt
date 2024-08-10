@@ -18,7 +18,7 @@ data class ActivityDto(
             userId = userId,
             parentId = parentId,
             username = username,
-            activityType = when(type) {
+            activityType = when (type) {
                 ActivityType.FollowedUser.type -> ActivityType.FollowedUser
                 ActivityType.LikedPost.type -> ActivityType.LikedPost
                 ActivityType.LikedComment.type -> ActivityType.LikedComment

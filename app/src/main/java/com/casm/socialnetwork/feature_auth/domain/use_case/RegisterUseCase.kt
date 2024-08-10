@@ -1,12 +1,8 @@
 package com.casm.socialnetwork.feature_auth.domain.use_case
 
-import android.util.Patterns
 import com.casm.socialnetwork.core.domain.util.ValidationUtil
-import com.casm.socialnetwork.core.util.Constants
-import com.casm.socialnetwork.feature_auth.domain.repository.AuthRepository
-import com.casm.socialnetwork.core.util.SimpleResource
 import com.casm.socialnetwork.feature_auth.domain.models.RegisterResult
-import com.casm.socialnetwork.feature_auth.presentation.util.AuthError
+import com.casm.socialnetwork.feature_auth.domain.repository.AuthRepository
 
 class RegisterUseCase(
     private val repository: AuthRepository

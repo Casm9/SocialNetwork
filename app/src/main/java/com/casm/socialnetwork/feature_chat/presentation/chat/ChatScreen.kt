@@ -22,12 +22,10 @@ import com.casm.socialnetwork.core.util.Screen
 @Composable
 fun ChatScreen(
     onNavigate: (String) -> Unit = {},
-    onNavigateUp: () -> Unit = {},
     imageLoader: ImageLoader,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
     val chats = viewModel.state.value.chats
-    val isLoading = viewModel.state.value.isLoading
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -43,7 +41,14 @@ fun ChatScreen(
                     item = chat,
                     imageLoader = imageLoader,
                     onItemClick = {
-                        onNavigate(Screen.MessagesScreen.route + "/${chat.remoteUserId}/${chat.remoteUsername}/${Base64.encodeToString(chat.remoteUserProfilePictureUrl.encodeToByteArray(), 0)}?chatId=${chat.chatId}")
+                        onNavigate(
+                            Screen.MessagesScreen.route + "/${chat.remoteUserId}/${chat.remoteUsername}/${
+                                Base64.encodeToString(
+                                    chat.remoteUserProfilePictureUrl.encodeToByteArray(),
+                                    0
+                                )
+                            }?chatId=${chat.chatId}"
+                        )
                     }
                 )
                 Spacer(modifier = Modifier.height(SpaceLarge))

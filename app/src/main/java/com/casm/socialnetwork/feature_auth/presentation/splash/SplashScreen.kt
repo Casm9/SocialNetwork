@@ -40,7 +40,7 @@ fun SplashScreen(
         OvershootInterpolator(2f)
     }
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         withContext(dispatcher) {
             scale.animateTo(
                 targetValue = 0.5f,
@@ -58,11 +58,12 @@ fun SplashScreen(
     }
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
-            when(event) {
+            when (event) {
                 is UiEvent.Navigate -> {
                     onPopBackStack()
                     onNavigate(event.route)
                 }
+
                 else -> Unit
             }
         }

@@ -13,21 +13,19 @@ class CustomGsonMessageAdapter<T> private constructor(
 ) : MessageAdapter<T> {
 
     override fun fromMessage(message: Message): T {
-        val payload = when(message) {
+        val payload = when (message) {
             is Message.Text -> message.value
             is Message.Bytes -> ""
         }
         val delimiterIndex = payload.indexOf("#")
-        if(delimiterIndex == -1) {
-            return Any() as T
-        }
+        if (delimiterIndex == -1) return Any() as T
         val type = payload.substring(0, delimiterIndex).toIntOrNull()
-        if(type == null) {
+        if (type == null) {
             println("Invalid format")
             return Any() as T
         }
         val json = payload.substring(delimiterIndex + 1, payload.length)
-        val clazz = when(type) {
+        val clazz = when (type) {
             WebSocketObject.MESSAGE.ordinal -> WsServerMessage::class.java
             else -> Any::class.java
         }
@@ -35,11 +33,11 @@ class CustomGsonMessageAdapter<T> private constructor(
     }
 
     override fun toMessage(data: T): Message {
-        val clazz = when(data) {
+        val clazz = when (data) {
             is WsClientMessage -> WsClientMessage::class.java
             else -> Any::class.java
         }
-        val type = when(data) {
+        val type = when (data) {
             is WsClientMessage -> WebSocketObject.MESSAGE.ordinal
             else -> -1
         }

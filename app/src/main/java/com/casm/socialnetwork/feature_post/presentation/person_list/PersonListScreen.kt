@@ -1,6 +1,5 @@
 package com.casm.socialnetwork.feature_post.presentation.person_list
 
-import android.graphics.Paint.Align
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,11 +26,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.ImageLoader
 import com.casm.socialnetwork.R
-import com.casm.socialnetwork.core.domain.models.User
-import com.casm.socialnetwork.core.domain.models.UserItem
 import com.casm.socialnetwork.core.presentation.components.StandardToolBar
 import com.casm.socialnetwork.core.presentation.components.UserProfileItem
 import com.casm.socialnetwork.core.presentation.ui.theme.IconSizeMedium
@@ -115,8 +111,6 @@ fun PersonListScreen(
                         ownUserId = viewModel.ownUserId.value
                     )
                     Spacer(modifier = Modifier.height(SpaceMedium))
-
-
                 }
             }
             if (state.isLoading) {

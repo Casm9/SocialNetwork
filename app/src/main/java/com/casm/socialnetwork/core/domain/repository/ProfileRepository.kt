@@ -1,8 +1,6 @@
 package com.casm.socialnetwork.core.domain.repository
 
 import android.net.Uri
-import androidx.compose.foundation.pager.PageSize
-import androidx.paging.PagingData
 import com.casm.socialnetwork.core.domain.models.Post
 import com.casm.socialnetwork.core.domain.models.UserItem
 import com.casm.socialnetwork.core.util.Constants
@@ -11,8 +9,6 @@ import com.casm.socialnetwork.core.util.SimpleResource
 import com.casm.socialnetwork.feature_profile.domain.model.Profile
 import com.casm.socialnetwork.feature_profile.domain.model.Skill
 import com.casm.socialnetwork.feature_profile.domain.model.UpdateProfileData
-import kotlinx.coroutines.flow.Flow
-import retrofit2.http.Query
 
 interface ProfileRepository {
 

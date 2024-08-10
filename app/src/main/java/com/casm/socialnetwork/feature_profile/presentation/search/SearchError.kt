@@ -5,4 +5,4 @@ import com.casm.socialnetwork.core.util.UIText
 
 class SearchError(
     val message: UIText
-): Error()
+) : Error()

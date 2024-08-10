@@ -30,8 +30,6 @@ import com.casm.socialnetwork.feature_activity.domain.ActivityType
 fun ActivityItem(
     activity: Activity,
     onNavigate: (String) -> Unit = {},
-    modifier: Modifier = Modifier,
-
     ) {
     Card(
         shape = MaterialTheme.shapes.medium,
@@ -45,21 +43,26 @@ fun ActivityItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val fillerText = when(activity.activityType) {
+            val fillerText = when (activity.activityType) {
                 is ActivityType.LikedPost ->
                     stringResource(id = R.string.liked)
+
                 is ActivityType.CommentedOnPost ->
                     stringResource(id = R.string.commented_on)
+
                 is ActivityType.FollowedUser ->
                     stringResource(id = R.string.followed_you)
+
                 is ActivityType.LikedComment ->
                     stringResource(id = R.string.liked)
             }
-            val actionText = when(activity.activityType) {
+            val actionText = when (activity.activityType) {
                 is ActivityType.LikedPost ->
                     stringResource(id = R.string.your_post)
+
                 is ActivityType.CommentedOnPost ->
                     stringResource(id = R.string.your_post)
+
                 is ActivityType.FollowedUser -> ""
                 is ActivityType.LikedComment ->
                     stringResource(id = R.string.your_comment)

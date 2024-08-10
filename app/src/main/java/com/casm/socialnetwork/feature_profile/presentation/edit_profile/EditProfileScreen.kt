@@ -46,17 +46,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.presentation.components.StandardTextField
 import com.casm.socialnetwork.core.presentation.components.StandardToolBar
-import com.casm.socialnetwork.feature_profile.presentation.edit_profile.components.Chip
 import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeLarge
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceLarge
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 import com.casm.socialnetwork.core.presentation.util.CropActivityResultContract
 import com.casm.socialnetwork.core.presentation.util.UiEvent
 import com.casm.socialnetwork.core.presentation.util.asString
+import com.casm.socialnetwork.feature_profile.presentation.edit_profile.components.Chip
 import com.casm.socialnetwork.feature_profile.presentation.util.EditProfileError
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
@@ -85,7 +84,7 @@ fun EditProfileScreen(
     val profilePictureGalleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) {
-        if(it == null) {
+        if (it == null) {
             return@rememberLauncherForActivityResult
         }
         cropProfilePictureLauncher.launch(it)
@@ -93,7 +92,7 @@ fun EditProfileScreen(
     val bannerImageGalleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) {
-        if(it == null) {
+        if (it == null) {
             return@rememberLauncherForActivityResult
         }
         cropBannerImageLauncher.launch(it)
@@ -102,12 +101,13 @@ fun EditProfileScreen(
     val context = LocalContext.current
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
-            when(event) {
+            when (event) {
                 is UiEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.uiText.asString(context)
                     )
                 }
+
                 is UiEvent.NavigateUp -> {
                     onNavigateUp()
                 }
@@ -154,7 +154,8 @@ fun EditProfileScreen(
                     imageLoader = imageLoader
                 ),
                 profileImage = rememberAsyncImagePainter(
-                    model = viewModel.profilePictureUri.value ?: profileState.profile?.profilePictureUrl,
+                    model = viewModel.profilePictureUri.value
+                        ?: profileState.profile?.profilePictureUrl,
                     imageLoader = imageLoader
                 ),
                 profilePictureSize = profilePictureSize,

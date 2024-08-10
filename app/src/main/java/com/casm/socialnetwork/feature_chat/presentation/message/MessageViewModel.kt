@@ -148,8 +148,8 @@ class MessageViewModel @Inject constructor(
     }
 
     sealed class MessageUpdateEvent {
-        data object SingleMessageUpdate: MessageUpdateEvent()
-        data object MessagePageLoaded: MessageUpdateEvent()
-        data object MessageSent: MessageUpdateEvent()
+        data object SingleMessageUpdate : MessageUpdateEvent()
+        data object MessagePageLoaded : MessageUpdateEvent()
+        data object MessageSent : MessageUpdateEvent()
     }
 }

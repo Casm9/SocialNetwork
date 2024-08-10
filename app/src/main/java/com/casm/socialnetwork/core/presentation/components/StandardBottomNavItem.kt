@@ -29,10 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.casm.socialnetwork.core.presentation.ui.theme.HintGray
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
-import kotlin.jvm.Throws
 
 @Composable
-@Throws(IllegalArgumentException::class)
 fun RowScope.StandardBottomNavItem(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
@@ -44,14 +42,14 @@ fun RowScope.StandardBottomNavItem(
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
-    if ( alertCount != null && alertCount < 0) {
+    if (alertCount != null && alertCount < 0) {
         throw IllegalArgumentException("Alert count can't be negative")
     }
     val lineLength = animateFloatAsState(
-        targetValue = if(selected) 1f else 0f,
+        targetValue = if (selected) 1f else 0f,
         animationSpec = tween(
             durationMillis = 300
-        )
+        ), label = ""
     )
 
     BottomNavigationItem(
@@ -67,7 +65,7 @@ fun RowScope.StandardBottomNavItem(
                     .fillMaxSize()
                     .padding(SpaceSmall)
                     .drawBehind {
-                        if(lineLength.value > 0f) {
+                        if (lineLength.value > 0f) {
                             drawLine(
                                 color = if (selected) selectedColor
                                 else unselectedColor,
@@ -95,7 +93,7 @@ fun RowScope.StandardBottomNavItem(
                     )
                 }
                 if (alertCount != null) {
-                    val alertText = if(alertCount > 99) {
+                    val alertText = if (alertCount > 99) {
                         "99+"
                     } else {
                         alertCount.toString()
@@ -113,7 +111,6 @@ fun RowScope.StandardBottomNavItem(
                             .size(15.dp)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.primary)
-
                     )
                 }
             }

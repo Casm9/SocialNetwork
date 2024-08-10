@@ -5,7 +5,6 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import coil.ImageLoader
 import coil.decode.SvgDecoder
-import com.casm.socialnetwork.core.domain.repository.ProfileRepository
 import com.casm.socialnetwork.core.domain.use_case.GetOwnUserIdUseCase
 import com.casm.socialnetwork.core.util.Constants
 import com.casm.socialnetwork.core.util.Constants.SHARED_PREF_NAME
@@ -78,4 +77,3 @@ object AppModule {
         return GetOwnUserIdUseCase(sharedPreferences)
     }
 }
-

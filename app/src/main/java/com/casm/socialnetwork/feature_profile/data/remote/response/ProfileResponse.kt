@@ -2,8 +2,7 @@ package com.casm.socialnetwork.feature_profile.data.remote.response
 
 import com.casm.socialnetwork.feature_profile.domain.model.Profile
 
-
-data class ProfileResponse (
+data class ProfileResponse(
     val userId: String,
     val username: String,
     val bio: String,
@@ -15,7 +14,7 @@ data class ProfileResponse (
     val topSkills: List<SkillDto>,
     val gitHubUrl: String?,
     val instagramUrl: String?,
-    val linkedInUrl:String?,
+    val linkedInUrl: String?,
     val isOwnProfile: Boolean,
     val isFollowing: Boolean
 ) {
@@ -24,7 +23,7 @@ data class ProfileResponse (
             userId = userId,
             username = username,
             bio = bio,
-            followerCount= followerCount,
+            followerCount = followerCount,
             followingCount = followingCount,
             postCount = postCount,
             profilePictureUrl = profilePictureUrl,

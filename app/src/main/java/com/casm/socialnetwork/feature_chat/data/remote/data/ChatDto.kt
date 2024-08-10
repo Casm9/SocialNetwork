@@ -12,14 +12,12 @@ data class ChatDto(
 ) {
     fun toChat(): Chat? {
         return Chat(
-           chatId = chatId,
-            remoteUserId = remoteUserId ?: return null ,
+            chatId = chatId,
+            remoteUserId = remoteUserId ?: return null,
             remoteUsername = remoteUsername ?: return null,
             remoteUserProfilePictureUrl = remoteUserProfilePictureUrl ?: return null,
             lastMessage = lastMessage ?: return null,
             timestamp = timestamp ?: return null
-
-
         )
     }
 }

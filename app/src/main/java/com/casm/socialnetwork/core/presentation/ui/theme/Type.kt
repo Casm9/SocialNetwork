@@ -16,7 +16,6 @@ val quicksand = FontFamily(
     Font(R.font.quicksand_bold, FontWeight.Bold)
 )
 
-// Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = quicksand,
@@ -42,5 +41,4 @@ val Typography = Typography(
         fontSize = 12.sp,
         color = TextWhite
     )
-
 )

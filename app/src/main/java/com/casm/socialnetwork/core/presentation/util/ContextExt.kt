@@ -31,5 +31,4 @@ fun Context.openUrlInBrowser(url: String) {
     }
 
     startActivity(Intent.createChooser(intent, "Select an app"))
-
 }

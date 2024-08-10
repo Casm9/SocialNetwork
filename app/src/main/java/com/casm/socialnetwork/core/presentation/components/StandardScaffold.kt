@@ -1,33 +1,26 @@
 package com.casm.socialnetwork.core.presentation.components
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.casm.socialnetwork.R
@@ -49,7 +42,7 @@ fun StandardScaffold(
         ),
         BottomNavItem(
             route = Screen.ChatScreen.route,
-            icon = Icons.Outlined.Message,
+            icon = Icons.AutoMirrored.Outlined.Message,
             contentDescription = "Message",
         ),
         BottomNavItem(route = "_"),
@@ -68,34 +61,36 @@ fun StandardScaffold(
     content: @Composable () -> Unit
 ) {
     Scaffold(
-       bottomBar = {
-           if (showBottomBar) {
-               BottomAppBar(
-                   modifier = Modifier.fillMaxWidth(),
-                   backgroundColor = MaterialTheme.colorScheme.surface,
-                   cutoutShape = CircleShape,
-                   elevation = 5.dp
-               ) {
-                   BottomNavigation (
-                       backgroundColor = MaterialTheme.colorScheme.surface
-                   ) {
-                       bottomNavItems.forEachIndexed { i, bottomNavItem ->
-                           StandardBottomNavItem(
-                               icon = bottomNavItem.icon,
-                               contentDescription = bottomNavItem.contentDescription,
-                               selected = navController.currentDestination?.route?.startsWith(bottomNavItem.route) == true,
-                               alertCount = bottomNavItem.alertCount,
-                               enabled = bottomNavItem.icon != null
-                           ) {
-                               if (navController.currentDestination?.route != bottomNavItem.route) {
-                                   navController.navigate(bottomNavItem.route)
-                               }
-                           }
-                       }
-                   }
-               }
-           }
-       },
+        bottomBar = {
+            if (showBottomBar) {
+                BottomAppBar(
+                    modifier = Modifier.fillMaxWidth(),
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    cutoutShape = CircleShape,
+                    elevation = 5.dp
+                ) {
+                    BottomNavigation(
+                        backgroundColor = MaterialTheme.colorScheme.surface
+                    ) {
+                        bottomNavItems.forEachIndexed { _, bottomNavItem ->
+                            StandardBottomNavItem(
+                                icon = bottomNavItem.icon,
+                                contentDescription = bottomNavItem.contentDescription,
+                                selected = navController.currentDestination?.route?.startsWith(
+                                    bottomNavItem.route
+                                ) == true,
+                                alertCount = bottomNavItem.alertCount,
+                                enabled = bottomNavItem.icon != null
+                            ) {
+                                if (navController.currentDestination?.route != bottomNavItem.route) {
+                                    navController.navigate(bottomNavItem.route)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         scaffoldState = state,
         floatingActionButton = {
             if (showBottomBar) {
@@ -117,5 +112,4 @@ fun StandardScaffold(
     ) {
         content()
     }
-    
 }

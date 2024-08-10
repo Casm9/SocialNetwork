@@ -13,12 +13,10 @@ private val DarkColorScheme = darkColorScheme(
     onSurface = LightGray
 )
 
-
 @Composable
 fun SocialNetworkTheme(
     content: @Composable () -> Unit
 ) {
-
     MaterialTheme(
         colorScheme = DarkColorScheme,
         typography = Typography,

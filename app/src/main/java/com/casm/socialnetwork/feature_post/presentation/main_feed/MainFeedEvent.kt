@@ -5,5 +5,4 @@ import com.casm.socialnetwork.core.domain.models.Post
 sealed class MainFeedEvent {
     data class DeletePost(val post: Post) : MainFeedEvent()
     data class LikedPost(val postId: String) : MainFeedEvent()
-
 }

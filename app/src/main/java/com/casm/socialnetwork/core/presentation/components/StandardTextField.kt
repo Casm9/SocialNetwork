@@ -1,6 +1,5 @@
 package com.casm.socialnetwork.core.presentation.components
 
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -37,8 +36,8 @@ import com.casm.socialnetwork.core.util.TestTags
 @Composable
 fun StandardTextField(
     modifier: Modifier = Modifier,
-    text: String ="",
-    hint: String ="",
+    text: String = "",
+    hint: String = "",
     maxLength: Int = 400,
     error: String = "",
     style: TextStyle = TextStyle(
@@ -64,9 +63,10 @@ fun StandardTextField(
         TextField(
             value = text,
             colors = TextFieldDefaults.textFieldColors(containerColor = containerColor),
-            onValueChange = { if(it.length <= maxLength) {
-                onValueChange(it)
-            }
+            onValueChange = {
+                if (it.length <= maxLength) {
+                    onValueChange(it)
+                }
             },
             maxLines = maxLines,
             textStyle = style,
@@ -80,7 +80,7 @@ fun StandardTextField(
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType
             ),
-            visualTransformation = if(!isPasswordVisible && isPasswordToggleDisplayed) {
+            visualTransformation = if (!isPasswordVisible && isPasswordToggleDisplayed) {
                 PasswordVisualTransformation()
             } else {
                 VisualTransformation.None
@@ -96,8 +96,9 @@ fun StandardTextField(
                     )
                 }
                 icon
+
             } else null,
-            trailingIcon = if(isPasswordToggleDisplayed) {
+            trailingIcon = if (isPasswordToggleDisplayed) {
                 val icon: @Composable () -> Unit = {
                     IconButton(
                         onClick = {
@@ -124,6 +125,7 @@ fun StandardTextField(
                     }
                 }
                 icon
+
             } else null,
             modifier = Modifier
                 .fillMaxWidth()
@@ -141,6 +143,4 @@ fun StandardTextField(
             )
         }
     }
-
-
 }

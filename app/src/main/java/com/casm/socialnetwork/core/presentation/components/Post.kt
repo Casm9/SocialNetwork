@@ -53,7 +53,6 @@ import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
 import com.casm.socialnetwork.core.presentation.ui.theme.TextWhite
 import com.casm.socialnetwork.core.util.Constants
 
-
 @Composable
 fun Post(
     post: Post,
@@ -183,7 +182,6 @@ fun Post(
                     .align(Alignment.TopCenter)
             )
         }
-
     }
 }
 
@@ -296,5 +294,4 @@ fun ActionRow(
             onDeleteClick = onDeleteClick
         )
     }
-
 }

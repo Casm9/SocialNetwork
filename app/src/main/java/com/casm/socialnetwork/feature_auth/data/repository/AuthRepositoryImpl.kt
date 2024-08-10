@@ -1,16 +1,15 @@
 package com.casm.socialnetwork.feature_auth.data.repository
 
-
 import android.content.SharedPreferences
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.util.Constants
-import com.casm.socialnetwork.feature_auth.domain.repository.AuthRepository
 import com.casm.socialnetwork.core.util.Resource
 import com.casm.socialnetwork.core.util.SimpleResource
 import com.casm.socialnetwork.core.util.UIText
+import com.casm.socialnetwork.feature_auth.data.remote.AuthApi
 import com.casm.socialnetwork.feature_auth.data.remote.request.CreateAccountRequest
 import com.casm.socialnetwork.feature_auth.data.remote.request.LoginRequest
-import com.casm.socialnetwork.feature_auth.data.remote.AuthApi
+import com.casm.socialnetwork.feature_auth.domain.repository.AuthRepository
 import retrofit2.HttpException
 import java.io.IOException
 

@@ -95,8 +95,7 @@ class SearchViewModel @Inject constructor(
             _searchState.value = searchState.value.copy(
                 isLoading = true
             )
-            val result = profileUseCases.searchUser(query)
-            when (result) {
+            when (val result = profileUseCases.searchUser(query)) {
                 is Resource.Success -> {
                     _searchState.value = searchState.value.copy(
                         userItems = result.data ?: emptyList(),
@@ -117,5 +116,4 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
-
 }

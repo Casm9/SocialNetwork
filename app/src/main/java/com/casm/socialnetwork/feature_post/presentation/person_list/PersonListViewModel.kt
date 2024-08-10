@@ -23,7 +23,7 @@ class PersonListViewModel @Inject constructor(
     private val toggleFollowStateForUserUseCase: ToggleFollowStateForUserUseCase,
     private val getOwnUserId: GetOwnUserIdUseCase,
     savedStateHandle: SavedStateHandle
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = mutableStateOf(PersonListState())
     val state: State<PersonListState> = _state
@@ -57,7 +57,7 @@ class PersonListViewModel @Inject constructor(
 
             _state.value = state.value.copy(
                 users = state.value.users.map {
-                    if(it.userId == userId) {
+                    if (it.userId == userId) {
                         it.copy(isFollowing = !it.isFollowing)
                     } else it
                 }
@@ -67,19 +67,21 @@ class PersonListViewModel @Inject constructor(
                 userId = userId,
                 isFollowing = isFollowing
             )
-            when(result) {
+            when (result) {
                 is Resource.Success -> Unit
                 is Resource.Error -> {
                     _state.value = state.value.copy(
                         users = state.value.users.map {
-                            if(it.userId == userId) {
+                            if (it.userId == userId) {
                                 it.copy(isFollowing = isFollowing)
                             } else it
                         }
                     )
-                    _eventFlow.emit(UiEvent.ShowSnackbar(
-                        uiText = result.uiText ?: UIText.unknownError()
-                    ))
+                    _eventFlow.emit(
+                        UiEvent.ShowSnackbar(
+                            uiText = result.uiText ?: UIText.unknownError()
+                        )
+                    )
                 }
             }
         }
@@ -88,14 +90,14 @@ class PersonListViewModel @Inject constructor(
     private fun getLikesForParent(parentId: String) {
         viewModelScope.launch {
             _state.value = state.value.copy(isLoading = true)
-            val result = postUseCases.getLikesForParent(parentId)
-            when(result) {
+            when (val result = postUseCases.getLikesForParent(parentId)) {
                 is Resource.Success -> {
                     _state.value = state.value.copy(
                         users = result.data ?: emptyList(),
                         isLoading = false
                     )
                 }
+
                 is Resource.Error -> {
                     _state.value = state.value.copy(isLoading = false)
                     _eventFlow.emit(

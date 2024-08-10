@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.User
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceLarge
-import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 
 @Composable
 fun ProfileStats(
@@ -45,24 +44,23 @@ fun ProfileStats(
             number = user.postCount,
             text = stringResource(id = R.string.posts)
         )
-        if(!isOwnProfile) {
+        if (!isOwnProfile) {
             Spacer(modifier = Modifier.width(SpaceLarge))
             Button(
                 onClick = onFollowClick,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if(isFollowing) Color.Red else MaterialTheme.colorScheme.primary
+                    containerColor = if (isFollowing) Color.Red else MaterialTheme.colorScheme.primary
                 )
             ) {
                 Text(
                     text = if (isFollowing) {
                         stringResource(id = R.string.unfollow)
                     } else stringResource(id = R.string.follow),
-                    color = if(isFollowing) {
+                    color = if (isFollowing) {
                         Color.White
                     } else MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
-
     }
 }

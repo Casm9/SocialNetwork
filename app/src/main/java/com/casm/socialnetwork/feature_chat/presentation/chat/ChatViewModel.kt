@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val chatUseCases: ChatUseCases
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = mutableStateOf(ChatState())
     val state: State<ChatState> = _state
@@ -32,14 +32,14 @@ class ChatViewModel @Inject constructor(
     private fun loadChats() {
         viewModelScope.launch {
             _state.value = state.value.copy(isLoading = true)
-            val result = chatUseCases.getChatsForUser()
-            when(result) {
+            when (val result = chatUseCases.getChatsForUser()) {
                 is Resource.Success -> {
                     _state.value = state.value.copy(
                         chats = result.data ?: emptyList(),
                         isLoading = false
                     )
                 }
+
                 is Resource.Error -> {
                     _eventFLow.emit(UiEvent.ShowSnackbar(result.uiText ?: UIText.unknownError()))
                     _state.value = state.value.copy(isLoading = false)

@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreatePostViewModel @Inject constructor(
     private val postUseCases: PostUseCases
-): ViewModel() {
+) : ViewModel() {
 
     private val _descriptionState = mutableStateOf(StandardTextFieldState())
     val descriptionState: State<StandardTextFieldState> = _descriptionState
@@ -36,7 +36,7 @@ class CreatePostViewModel @Inject constructor(
 
 
     fun onEvent(event: CreatePostEvent) {
-        when(event) {
+        when (event) {
             is CreatePostEvent.EnterDescription -> {
                 _descriptionState.value = descriptionState.value.copy(
                     text = event.value
@@ -59,17 +59,22 @@ class CreatePostViewModel @Inject constructor(
                         description = descriptionState.value.text,
                         imageUri = chosenImageUri.value
                     )
-                    when(result) {
+                    when (result) {
                         is Resource.Success -> {
-                            _eventFlow.emit(UiEvent.ShowSnackbar(
-                                uiText = UIText.StringResource(R.string.post_created)
-                            ))
+                            _eventFlow.emit(
+                                UiEvent.ShowSnackbar(
+                                    uiText = UIText.StringResource(R.string.post_created)
+                                )
+                            )
                             _eventFlow.emit(UiEvent.NavigateUp)
                         }
+
                         is Resource.Error -> {
-                            _eventFlow.emit(UiEvent.ShowSnackbar(
-                                result.uiText ?: UIText.unknownError()
-                            ))
+                            _eventFlow.emit(
+                                UiEvent.ShowSnackbar(
+                                    result.uiText ?: UIText.unknownError()
+                                )
+                            )
                         }
                     }
                     _isLoading.value = false

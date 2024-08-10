@@ -11,5 +11,4 @@ fun ContentResolver.getFileName(uri: Uri): String {
     val fileName = returnCursor.getString(nameIndex)
     returnCursor.close()
     return fileName
-
 }

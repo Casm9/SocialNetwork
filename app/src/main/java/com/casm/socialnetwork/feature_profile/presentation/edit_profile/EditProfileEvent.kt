@@ -4,13 +4,13 @@ import android.net.Uri
 import com.casm.socialnetwork.feature_profile.domain.model.Skill
 
 sealed class EditProfileEvent() {
-    data class EnteredUsername(val value: String): EditProfileEvent()
-    data class EnteredGitHubUrl(val value: String): EditProfileEvent()
-    data class EnteredInstagramUrl(val value: String): EditProfileEvent()
-    data class EnteredLinkedInUrl(val value: String): EditProfileEvent()
-    data class EnteredBio(val value: String): EditProfileEvent()
-    data class CropProfilePicture(val uri: Uri?): EditProfileEvent()
-    data class CropBannerImage(val uri: Uri?): EditProfileEvent()
-    data class SetSkillSelected(val skill: Skill): EditProfileEvent()
-    data object UpdateProfile: EditProfileEvent()
+    data class EnteredUsername(val value: String) : EditProfileEvent()
+    data class EnteredGitHubUrl(val value: String) : EditProfileEvent()
+    data class EnteredInstagramUrl(val value: String) : EditProfileEvent()
+    data class EnteredLinkedInUrl(val value: String) : EditProfileEvent()
+    data class EnteredBio(val value: String) : EditProfileEvent()
+    data class CropProfilePicture(val uri: Uri?) : EditProfileEvent()
+    data class CropBannerImage(val uri: Uri?) : EditProfileEvent()
+    data class SetSkillSelected(val skill: Skill) : EditProfileEvent()
+    data object UpdateProfile : EditProfileEvent()
 }

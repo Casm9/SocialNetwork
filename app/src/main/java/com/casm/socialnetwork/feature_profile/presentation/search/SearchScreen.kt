@@ -28,8 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.ImageLoader
 import com.casm.socialnetwork.R
-import com.casm.socialnetwork.core.domain.models.User
-import com.casm.socialnetwork.core.domain.models.UserItem
 import com.casm.socialnetwork.core.presentation.components.StandardTextField
 import com.casm.socialnetwork.core.presentation.components.StandardToolBar
 import com.casm.socialnetwork.core.presentation.components.UserProfileItem
@@ -114,8 +112,6 @@ fun SearchScreen(
                             }
                         )
                         Spacer(modifier = Modifier.height(SpaceMedium))
-
-
                     }
                 }
             }
@@ -126,5 +122,4 @@ fun SearchScreen(
             )
         }
     }
-
 }

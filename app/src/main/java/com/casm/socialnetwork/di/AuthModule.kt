@@ -1,12 +1,12 @@
 package com.casm.socialnetwork.di
 
 import android.content.SharedPreferences
-import com.casm.socialnetwork.feature_auth.domain.repository.AuthRepository
-import com.casm.socialnetwork.feature_auth.domain.use_case.RegisterUseCase
 import com.casm.socialnetwork.feature_auth.data.remote.AuthApi
 import com.casm.socialnetwork.feature_auth.data.repository.AuthRepositoryImpl
+import com.casm.socialnetwork.feature_auth.domain.repository.AuthRepository
 import com.casm.socialnetwork.feature_auth.domain.use_case.AuthenticateUseCase
 import com.casm.socialnetwork.feature_auth.domain.use_case.LoginUseCase
+import com.casm.socialnetwork.feature_auth.domain.use_case.RegisterUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

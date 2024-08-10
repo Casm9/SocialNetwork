@@ -92,7 +92,6 @@ fun ChatItem(
                             .format(item.timestamp)
                     )
                 }
-
                 Spacer(modifier = Modifier.height(SpaceSmall))
                 Text(
                     text = item.lastMessage,

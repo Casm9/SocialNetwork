@@ -13,6 +13,6 @@ class GetMessagesForChat(
         page: Int,
         pageSize: Int = DEFAULT_PAGE_SIZE
     ): Resource<List<Message>> {
-       return repository.getMessagesForChat(chatId, page, pageSize)
+        return repository.getMessagesForChat(chatId, page, pageSize)
     }
 }

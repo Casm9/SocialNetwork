@@ -6,7 +6,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.casm.socialnetwork.R
-import com.casm.socialnetwork.core.domain.models.Comment
 import com.casm.socialnetwork.core.domain.states.StandardTextFieldState
 import com.casm.socialnetwork.core.presentation.util.UiEvent
 import com.casm.socialnetwork.core.util.ParentType
@@ -15,7 +14,6 @@ import com.casm.socialnetwork.core.util.UIText
 import com.casm.socialnetwork.feature_auth.domain.use_case.AuthenticateUseCase
 import com.casm.socialnetwork.feature_post.domain.use_case.PostUseCases
 import com.casm.socialnetwork.feature_post.presentation.util.CommentError
-import com.casm.socialnetwork.feature_post.presentation.util.PostDescriptionError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -96,7 +94,7 @@ class PostDetailViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             isUserLoggedIn = authenticate() is Resource.Success
-            if(!isUserLoggedIn) {
+            if (!isUserLoggedIn) {
                 _eventFlow.emit(UiEvent.ShowSnackbar(UIText.StringResource(R.string.error_not_logged_in)))
                 return@launch
             }
@@ -170,7 +168,7 @@ class PostDetailViewModel @Inject constructor(
     private fun createComment(postId: String, comment: String) {
         viewModelScope.launch {
             isUserLoggedIn = authenticate() is Resource.Success
-            if(!isUserLoggedIn) {
+            if (!isUserLoggedIn) {
                 _eventFlow.emit(UiEvent.ShowSnackbar(UIText.StringResource(R.string.error_not_logged_in)))
                 return@launch
             }
@@ -217,8 +215,7 @@ class PostDetailViewModel @Inject constructor(
             _state.value = state.value.copy(
                 isLoadingPost = true
             )
-            val result = postUseCases.getPostDetails(postId)
-            when (result) {
+            when (val result = postUseCases.getPostDetails(postId)) {
                 is Resource.Success -> {
                     _state.value = state.value.copy(
                         post = result.data,
@@ -245,8 +242,7 @@ class PostDetailViewModel @Inject constructor(
             _state.value = state.value.copy(
                 isLoadingComments = true
             )
-            val result = postUseCases.getCommentsForPost(postId)
-            when (result) {
+            when (val result = postUseCases.getCommentsForPost(postId)) {
                 is Resource.Success -> {
                     _state.value = state.value.copy(
                         comments = result.data ?: emptyList(),

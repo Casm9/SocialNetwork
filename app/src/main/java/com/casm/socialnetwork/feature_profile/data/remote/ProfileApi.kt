@@ -2,12 +2,10 @@ package com.casm.socialnetwork.feature_profile.data.remote
 
 import com.casm.socialnetwork.core.data.dto.response.BasicApiResponse
 import com.casm.socialnetwork.core.data.dto.response.UserItemDto
-import com.casm.socialnetwork.core.util.Resource
 import com.casm.socialnetwork.feature_profile.data.remote.request.FollowUpdateRequest
 import com.casm.socialnetwork.feature_profile.data.remote.response.ProfileResponse
 import com.casm.socialnetwork.feature_profile.data.remote.response.SkillDto
 import okhttp3.MultipartBody
-import okhttp3.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

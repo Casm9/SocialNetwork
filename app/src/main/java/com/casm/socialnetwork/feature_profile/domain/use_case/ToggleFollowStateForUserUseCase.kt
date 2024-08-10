@@ -1,7 +1,7 @@
 package com.casm.socialnetwork.feature_profile.domain.use_case
 
-import com.casm.socialnetwork.core.util.SimpleResource
 import com.casm.socialnetwork.core.domain.repository.ProfileRepository
+import com.casm.socialnetwork.core.util.SimpleResource
 
 class ToggleFollowStateForUserUseCase(
     private val repository: ProfileRepository

@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.presentation.components.StandardTextField
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceLarge
@@ -49,15 +48,16 @@ fun LoginScreen(
     val passwordState = viewModel.passwordState.value
     val state = viewModel.loginState.value
     val context = LocalContext.current
-    
-    LaunchedEffect(key1 = true){
+
+    LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
-            when(event) {
+            when (event) {
                 is UiEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.uiText.asString(context)
                     )
                 }
+
                 is UiEvent.Navigate -> {
                     onNavigate(event.route)
                 }
@@ -135,7 +135,7 @@ fun LoginScreen(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             }
-            if(state.isLoading) {
+            if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
         }

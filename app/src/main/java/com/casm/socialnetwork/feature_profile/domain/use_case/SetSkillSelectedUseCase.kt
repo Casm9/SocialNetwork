@@ -15,10 +15,10 @@ class SetSkillSelectedUseCase {
         if (skillToToggle in selectedSkills) {
             return Resource.Success(selectedSkills - skillToToggle)
         }
-       return if(selectedSkills.size >= ProfileConstants.MAX_SELECTED_SKILL_COUNT) {
-           Resource.Error(uiText = UIText.StringResource(R.string.error_max_skills_selected))
+        return if (selectedSkills.size >= ProfileConstants.MAX_SELECTED_SKILL_COUNT) {
+            Resource.Error(uiText = UIText.StringResource(R.string.error_max_skills_selected))
         } else {
             Resource.Success(selectedSkills + skillToToggle)
-       }
+        }
     }
 }

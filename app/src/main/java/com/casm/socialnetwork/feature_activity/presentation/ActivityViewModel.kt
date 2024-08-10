@@ -10,9 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ActivityViewModel @Inject constructor(
-    private val getActivities: GetActivitiesUseCase
-): ViewModel() {
+class ActivityViewModel @Inject constructor(getActivities: GetActivitiesUseCase) : ViewModel() {
 
     val activities = getActivities().cachedIn(viewModelScope)
 
@@ -20,13 +18,9 @@ class ActivityViewModel @Inject constructor(
     val state: State<ActivityState> = _state
 
     fun onEvent(event: ActivityEvent) {
-        when(event) {
-            is ActivityEvent.ClickedOnUser -> {
-
-            }
-            is ActivityEvent.ClickedOnParent -> {
-
-            }
+        when (event) {
+            is ActivityEvent.ClickedOnUser -> {}
+            is ActivityEvent.ClickedOnParent -> {}
         }
     }
 }

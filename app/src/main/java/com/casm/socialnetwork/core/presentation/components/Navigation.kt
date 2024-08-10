@@ -73,7 +73,6 @@ fun Navigation(
         }
         composable(Screen.ChatScreen.route) {
             ChatScreen(
-                onNavigateUp = navController::navigateUp,
                 onNavigate = navController::navigate,
                 imageLoader = imageLoader
             )
@@ -105,7 +104,6 @@ fun Navigation(
                 remoteUsername = remoteUsername,
                 encodedRemoteUserProfilePictureUrl = remoteUserProfilePictureUrl,
                 onNavigateUp = navController::navigateUp,
-                onNavigate = navController::navigate,
                 imageLoader = imageLoader
             )
         }

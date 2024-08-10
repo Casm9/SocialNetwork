@@ -8,6 +8,6 @@ class GetChatsForUser(
     private val repository: ChatRepository
 ) {
     suspend operator fun invoke(): Resource<List<Chat>> {
-       return repository.getChatsForUser()
+        return repository.getChatsForUser()
     }
 }

@@ -76,7 +76,6 @@ class ProfileRepositoryImpl(
         }
     }
 
-
     override suspend fun updateProfile(
         updateProfileData: UpdateProfileData,
         bannerImageUri: Uri?,
@@ -221,6 +220,4 @@ class ProfileRepositoryImpl(
             .putString(Constants.KEY_USER_ID, "")
             .apply()
     }
-
-
 }

@@ -8,5 +8,4 @@ data class User(
     val followerCount: Int,
     val followingCount: Int,
     val postCount: Int
-
 )

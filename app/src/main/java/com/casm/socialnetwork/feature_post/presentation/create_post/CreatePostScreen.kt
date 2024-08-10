@@ -1,8 +1,6 @@
 package com.casm.socialnetwork.feature_post.presentation.create_post
 
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,8 +18,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -30,33 +27,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.ImageLoader
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import coil.request.ImageRequest
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.presentation.components.StandardTextField
 import com.casm.socialnetwork.core.presentation.components.StandardToolBar
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceLarge
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
-import com.casm.socialnetwork.core.domain.states.StandardTextFieldState
-import com.casm.socialnetwork.core.domain.util.getFileName
 import com.casm.socialnetwork.core.presentation.util.CropActivityResultContract
 import com.casm.socialnetwork.core.presentation.util.UiEvent
 import com.casm.socialnetwork.core.presentation.util.asString
@@ -66,9 +52,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.io.File
-import java.util.UUID
-
 
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
@@ -81,7 +64,7 @@ fun CreatePostScreen(
     val imageUri = viewModel.chosenImageUri.value
 
     val cropActivityLauncher = rememberLauncherForActivityResult(
-        contract = CropActivityResultContract(16f,9f)
+        contract = CropActivityResultContract(16f, 9f)
     ) {
         viewModel.onEvent(CreatePostEvent.CropImage(it))
     }
@@ -94,10 +77,10 @@ fun CreatePostScreen(
     }
 
     val context = LocalContext.current
-    
+
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
-            when(event) {
+            when (event) {
                 is UiEvent.ShowSnackbar -> {
                     GlobalScope.launch {
                         scaffoldState.snackbarHostState.showSnackbar(
@@ -199,7 +182,7 @@ fun CreatePostScreen(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 Spacer(modifier = Modifier.width(SpaceSmall))
-                if(viewModel.isLoading.value) {
+                if (viewModel.isLoading.value) {
                     CircularProgressIndicator(
                         color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier
@@ -207,9 +190,8 @@ fun CreatePostScreen(
                             .align(Alignment.CenterVertically)
                     )
                 } else {
-                    Icon(imageVector = Icons.Default.Send, contentDescription = null)
+                    Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = null)
                 }
-
             }
         }
     }

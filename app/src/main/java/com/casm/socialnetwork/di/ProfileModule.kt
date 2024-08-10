@@ -1,11 +1,10 @@
 package com.casm.socialnetwork.di
 
 import android.content.SharedPreferences
-import com.casm.socialnetwork.feature_post.data.remote.PostApi
-import com.casm.socialnetwork.feature_profile.data.remote.ProfileApi
 import com.casm.socialnetwork.core.data.repository.ProfileRepositoryImpl
 import com.casm.socialnetwork.core.domain.repository.ProfileRepository
-import com.casm.socialnetwork.core.domain.use_case.GetOwnUserIdUseCase
+import com.casm.socialnetwork.feature_post.data.remote.PostApi
+import com.casm.socialnetwork.feature_profile.data.remote.ProfileApi
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetPostsForProfileUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetProfileUseCase
 import com.casm.socialnetwork.feature_profile.domain.use_case.GetSkillsUseCase

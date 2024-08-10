@@ -22,12 +22,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.Activity
-import com.casm.socialnetwork.core.util.DateFormatUtil
-import com.casm.socialnetwork.feature_activity.presentation.components.ActivityItem
 import com.casm.socialnetwork.core.presentation.components.StandardToolBar
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
-import com.casm.socialnetwork.feature_activity.domain.ActivityType
-import kotlin.random.Random
+import com.casm.socialnetwork.feature_activity.presentation.components.ActivityItem
 
 @Composable
 fun ActivityScreen(
@@ -83,5 +80,4 @@ fun ActivityScreen(
             )
         }
     }
-
 }

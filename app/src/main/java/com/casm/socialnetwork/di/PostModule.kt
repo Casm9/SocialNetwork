@@ -37,7 +37,6 @@ object PostModule {
             .create(PostApi::class.java)
     }
 
-
     @Provides
     @Singleton
     fun providePostRepository(
@@ -46,7 +45,6 @@ object PostModule {
     ): PostRepository {
         return PostRepositoryImpl(api, gson)
     }
-
 
     @Provides
     @Singleton

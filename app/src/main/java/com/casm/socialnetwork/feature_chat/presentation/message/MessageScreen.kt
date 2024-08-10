@@ -43,7 +43,6 @@ fun MessageScreen(
     encodedRemoteUserProfilePictureUrl: String,
     imageLoader: ImageLoader,
     onNavigateUp: () -> Unit = {},
-    onNavigate: (String) -> Unit = {},
     viewModel: MessageViewModel = hiltViewModel()
 ) {
     val decodedRemoteUserProfilePictureUrl = remember {
@@ -56,7 +55,7 @@ fun MessageScreen(
 
     LaunchedEffect(key1 = pagingState, key2 = keyboardController) {
         viewModel.messageUpdatedEvent.collect { event ->
-            when(event) {
+            when (event) {
                 is MessageViewModel.MessageUpdateEvent.SingleMessageUpdate,
                 is MessageViewModel.MessageUpdateEvent.MessagePageLoaded -> {
                     if (pagingState.items.isEmpty()) {
@@ -64,6 +63,7 @@ fun MessageScreen(
                     }
                     lazyListState.scrollToItem(pagingState.items.size - 1)
                 }
+
                 is MessageViewModel.MessageUpdateEvent.MessageSent -> {
                     keyboardController?.hide()
                 }
@@ -146,5 +146,4 @@ fun MessageScreen(
             )
         }
     }
-
 }

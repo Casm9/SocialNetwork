@@ -97,7 +97,7 @@ fun ProfileHeaderSection(
             }
         }
         Spacer(modifier = Modifier.height(SpaceMedium))
-        if(user.description.isNotBlank()) {
+        if (user.description.isNotBlank()) {
             Text(
                 text = user.description,
                 style = MaterialTheme.typography.bodyMedium,
