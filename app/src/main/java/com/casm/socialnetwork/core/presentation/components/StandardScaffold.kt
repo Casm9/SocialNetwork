@@ -1,6 +1,5 @@
 package com.casm.socialnetwork.core.presentation.components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.BottomAppBar
@@ -27,7 +26,6 @@ import com.casm.socialnetwork.R
 import com.casm.socialnetwork.core.domain.models.BottomNavItem
 import com.casm.socialnetwork.core.util.Screen
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun StandardScaffold(
     navController: NavController,
@@ -110,6 +108,7 @@ fun StandardScaffold(
         floatingActionButtonPosition = FabPosition.Center,
         modifier = modifier
     ) {
+        it.let { null }
         content()
     }
 }

@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,7 +37,6 @@ import com.casm.socialnetwork.core.presentation.ui.theme.ProfilePictureSizeSmall
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceMedium
 import com.casm.socialnetwork.core.presentation.ui.theme.SpaceSmall
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun UserProfileItem(
     user: UserItem,
@@ -52,7 +51,7 @@ fun UserProfileItem(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
         onClick = onItemClick,
-        elevation = 5.dp,
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
     ) {
         Row(
             modifier = Modifier
